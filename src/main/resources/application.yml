@@ -77,7 +77,7 @@ spring:
 #          - 39.108.14.114:7006
 
       #单机配置
-      host: 39.98.195.208
+      host: 127.0.0.1
       port: 6379
 
 #  rabbitmq配置
@@ -132,3 +132,5 @@ spring:
 #   oss:
 #      endPoint: oss-cn-beijing.aliyuncs.com
 #      bucketName: iceasmp
+wx:
+    token: wxToken

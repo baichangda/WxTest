@@ -11,6 +11,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,6 +29,9 @@ public class AnonymousController extends BaseController{
 
     @Autowired
     ApiService apiService;
+
+    @Value("${wx.token}")
+    String wxToken;
 
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/getPublicKey",method = RequestMethod.GET)
@@ -56,6 +60,14 @@ public class AnonymousController extends BaseController{
         String fileName=I18nUtil.getMessage("AnonymousController.exportApi.fileName")+".xlsx";
         response(workbook,toDateFileName(fileName),response);
         return JsonMessage.success();
+    }
+
+    @SuppressWarnings("unchecked")
+    @RequestMapping(value = "/getWxToken",method = RequestMethod.GET)
+    @ApiOperation(value = "获取微信Token验证",notes = "获取微信Token验证")
+    @ApiResponse(code = 200,message = "Token",response = String.class)
+    public String getWxToken(){
+        return wxToken;
     }
 
 }
