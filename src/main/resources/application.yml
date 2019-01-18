@@ -13,19 +13,6 @@ spring:
        period: -1
    profiles.active: dev
    freemarker.cache: false
-   datasource:
-     driver-class-name: com.mysql.cj.jdbc.Driver
-     hikari:
-       data-source-properties:
-         cachePrepStmts: true
-         prepStmtCacheSize: 250
-         prepStmtCacheSqlLimit: 2048
-         useServerPrepStmts: true
-       minimumIdle: 5
-       maximumPoolSize: 15
-     url: jdbc:mysql://127.0.0.1:3306/msbf?characterEncoding=utf8&useSSL=false&rewriteBatchedStatements=true&serverTimezone=UTC
-     username: root
-     password: 123456
 #  mongodb配置
    data.mongodb.uri: mongodb://test:test@localhost:27017/test
 #  jpa配置
