@@ -5,11 +5,15 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -51,17 +55,51 @@ public class WxService {
             String content=root.elementText("Content");
 
             Document res= DocumentHelper.createDocument();
-            res.addElement("ToUserName",fromUserName);
-            res.addElement("FromUserName",wxName);
-            res.addElement("CreateTime",new Date().getTime()+"");
-            res.addElement("MsgType","text");
-            res.addElement("Content",content);
-            logger.info("\nres: "+res.getText());
-            return res.getText();
+            Element resRoot= res.addElement("xml");
+            Element e1=resRoot.addElement("ToUserName");
+            e1.setText(fromUserName);
+            Element e2=resRoot.addElement("FromUserName");
+            e2.setText(wxName);
+            Element e3=resRoot.addElement("CreateTime");
+            e3.setText(new Date().getTime()+"");
+            Element e4=resRoot.addElement("MsgType");
+            e4.setText("text");
+            Element e5=resRoot.addElement("Content");
+            e5.setText(content);
+
+            String resStr;
+            try(StringWriter writer=new StringWriter()){
+                OutputFormat format = OutputFormat.createCompactFormat();
+                XMLWriter output = new XMLWriter(writer, format);
+                output.write(res);
+                resStr=writer.toString();
+            }
+            logger.info("\nres: "+resStr);
+            return resStr;
         } catch (Exception e) {
             e.printStackTrace();
             return "failed";
         }
 
+    }
+
+    public static void main(String [] args) throws IOException {
+        Document res= DocumentHelper.createDocument();
+        Element resRoot= res.addElement("xml");
+        Element e1=resRoot.addElement("ToUserName");
+        e1.setText("1");
+        Element e2=resRoot.addElement("FromUserName");
+        e2.setText("2");
+        Element e3=resRoot.addElement("CreateTime");
+        e3.setText(new Date().getTime()+"");
+        Element e4=resRoot.addElement("MsgType");
+        e4.setText("text");
+        Element e5=resRoot.addElement("Content");
+        e5.setText("3");
+        OutputFormat format = OutputFormat.createCompactFormat();
+        StringWriter writer=new StringWriter();
+        XMLWriter output = new XMLWriter(writer, format);
+        output.write(res);
+        logger.info("\nres: "+writer.toString());
     }
 }
