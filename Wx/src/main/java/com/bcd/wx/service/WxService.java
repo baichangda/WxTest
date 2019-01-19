@@ -1,7 +1,6 @@
 package com.bcd.wx.service;
 
 import com.bcd.base.util.JsonUtil;
-import com.bcd.wx.bean.UserMessageBean;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -50,15 +49,15 @@ public class WxService {
             Element root= document.getRootElement();
             String fromUserName=root.elementText("FromUserName");
             String content=root.elementText("Content");
-            UserMessageBean res=new UserMessageBean();
-            res.setToUserName(fromUserName);
-            res.setFromUserName(wxName);
-            res.setCreateTime(new Date());
-            res.setMsgType("text");
-            res.setContent(content);
-            String resStr=JsonUtil.GLOBAL_OBJECT_MAPPER.writeValueAsString(res);
-            logger.info("\nres: "+resStr);
-            return resStr;
+
+            Document res= DocumentHelper.createDocument();
+            res.addElement("ToUserName",fromUserName);
+            res.addElement("FromUserName",wxName);
+            res.addElement("CreateTime",new Date().getTime()+"");
+            res.addElement("MsgType","text");
+            res.addElement("Content",content);
+            logger.info("\nres: "+res.getText());
+            return res.getText();
         } catch (Exception e) {
             e.printStackTrace();
             return "failed";
