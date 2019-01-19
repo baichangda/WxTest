@@ -135,3 +135,4 @@ spring:
 wx:
     token: wxToken
     aeskey: 6LBxXIefdvgKCteVUu07xBvTWCs455N7jrR2KUboPR1
+    name: baichangda

@@ -19,6 +19,9 @@ public class WxService {
     @Value("${wx.token}")
     String wxToken;
 
+    @Value("${wx.name}")
+    String wxName;
+
     private final static Logger logger= LoggerFactory.getLogger(WxService.class);
 
     public String token(String signature, String timestamp, String nonce, String echostr) {
@@ -44,7 +47,7 @@ public class WxService {
             logger.info("\nmessage: "+message);
             UserMessageBean res=new UserMessageBean();
             res.setToUserName(message.getFromUserName());
-            res.setFromUserName("bcd");
+            res.setFromUserName(wxName);
             res.setCreateTime(new Date());
             res.setMsgType("text");
             res.setContent(message.getContent());
