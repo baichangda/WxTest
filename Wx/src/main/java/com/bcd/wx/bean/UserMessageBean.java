@@ -1,14 +1,23 @@
 package com.bcd.wx.bean;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+
 import java.util.Date;
 
 public class UserMessageBean {
+    @JsonProperty("URL")
     private String URL;
+    @JsonProperty("ToUserName")
     private String ToUserName;
+    @JsonProperty("FromUserName")
     private String FromUserName;
+    @JsonProperty("CreateTime")
     private Date CreateTime;
+    @JsonProperty("MsgType")
     private String MsgType;
+    @JsonProperty("Content")
     private String Content;
+    @JsonProperty("MsgId")
     private Long MsgId;
 
     public String getURL() {
