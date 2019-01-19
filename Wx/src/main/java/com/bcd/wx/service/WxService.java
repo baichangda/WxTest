@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -39,12 +40,19 @@ public class WxService {
     public String handle(String data) {
         logger.info("\ndata: "+data);
         try {
-            UserMessageBean userMessageBean=JsonUtil.GLOBAL_OBJECT_MAPPER.readValue(data, UserMessageBean.class);
-            logger.info("\nUserMessageBean: "+userMessageBean);
+            UserMessageBean message=JsonUtil.GLOBAL_OBJECT_MAPPER.readValue(data, UserMessageBean.class);
+            logger.info("\nmessage: "+message);
+            UserMessageBean res=new UserMessageBean();
+            res.setToUserName(message.getFromUserName());
+            res.setFromUserName("bcd");
+            res.setCreateTime(new Date());
+            res.setMsgType("text");
+            res.setContent(message.getContent());
+            return JsonUtil.GLOBAL_OBJECT_MAPPER.writeValueAsString(res);
         } catch (Exception e) {
             e.printStackTrace();
             return "failed";
         }
-        return "success";
+
     }
 }
