@@ -2,4 +2,5 @@ rootProject.name = 'WxTest'
 include 'Base'
 include 'Sys'
 include 'MongoDB'
+include 'Wx'
 
