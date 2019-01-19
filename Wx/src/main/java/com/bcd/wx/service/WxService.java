@@ -48,7 +48,9 @@ public class WxService {
             res.setCreateTime(new Date());
             res.setMsgType("text");
             res.setContent(message.getContent());
-            return JsonUtil.GLOBAL_OBJECT_MAPPER.writeValueAsString(res);
+            String resStr=JsonUtil.GLOBAL_OBJECT_MAPPER.writeValueAsString(res);
+            logger.info("\nres: "+resStr);
+            return resStr;
         } catch (Exception e) {
             e.printStackTrace();
             return "failed";
