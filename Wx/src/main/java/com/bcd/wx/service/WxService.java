@@ -3,6 +3,9 @@ package com.bcd.wx.service;
 import com.bcd.base.util.JsonUtil;
 import com.bcd.wx.bean.UserMessageBean;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,14 +46,16 @@ public class WxService {
     public String handle(String data) {
         logger.info("\ndata: "+data);
         try {
-            UserMessageBean message=JsonUtil.GLOBAL_OBJECT_MAPPER.readValue(data, UserMessageBean.class);
-            logger.info("\nmessage: "+message);
+            Document document= DocumentHelper.parseText(data);
+            Element root= document.getRootElement();
+            String fromUserName=root.elementText("FromUserName");
+            String content=root.elementText("Content");
             UserMessageBean res=new UserMessageBean();
-            res.setToUserName(message.getFromUserName());
+            res.setToUserName(fromUserName);
             res.setFromUserName(wxName);
             res.setCreateTime(new Date());
             res.setMsgType("text");
-            res.setContent(message.getContent());
+            res.setContent(content);
             String resStr=JsonUtil.GLOBAL_OBJECT_MAPPER.writeValueAsString(res);
             logger.info("\nres: "+resStr);
             return resStr;
