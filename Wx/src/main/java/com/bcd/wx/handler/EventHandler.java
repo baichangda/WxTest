@@ -1,11 +1,11 @@
 package com.bcd.wx.handler;
 
-import com.bcd.base.util.JsonUtil;
 import com.bcd.wx.data.Event;
 import com.bcd.wx.data.Message;
 import com.bcd.wx.data.MsgType;
 import com.bcd.wx.data.request.RequestEventMessage;
 import com.bcd.wx.data.response.ResponseTextMessage;
+import com.bcd.wx.define.CommonConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -62,26 +62,32 @@ public class EventHandler extends Handler<RequestEventMessage>{
     }
 
     private Message handleSubscribe(RequestEventMessage message){
-        return new ResponseTextMessage(wxName,message.getFromUserName(),"欢迎订阅");
+        String name= CommonConst.USER_ID_TO_NAME.get(message.getFromUserName());
+        return new ResponseTextMessage(wxName,message.getFromUserName(),name==null?"欢迎订阅":(name+","+"欢迎订阅"));
     }
 
     private Message handleUnSubscribe(RequestEventMessage message){
-        return new ResponseTextMessage(wxName,message.getFromUserName(),"取消订阅");
+        String name= CommonConst.USER_ID_TO_NAME.get(message.getFromUserName());
+        return new ResponseTextMessage(wxName,message.getFromUserName(),name==null?"取消订阅":(name+","+"取消订阅"));
     }
 
     private Message handleScan(RequestEventMessage message){
-        return new ResponseTextMessage(wxName,message.getFromUserName(),"你又回来了");
+        String name= CommonConst.USER_ID_TO_NAME.get(message.getFromUserName());
+        return new ResponseTextMessage(wxName,message.getFromUserName(),name==null?"你又回来了":(name+","+"你又回来了"));
     }
 
     private Message handleLocation(RequestEventMessage message){
-        return new ResponseTextMessage(wxName,message.getFromUserName(),"上报位置");
+        String name= CommonConst.USER_ID_TO_NAME.get(message.getFromUserName());
+        return new ResponseTextMessage(wxName,message.getFromUserName(),name==null?"上报位置":(name+","+"上报位置"));
     }
 
     private Message handleClick(RequestEventMessage message){
-        return new ResponseTextMessage(wxName,message.getFromUserName(),"点击");
+        String name= CommonConst.USER_ID_TO_NAME.get(message.getFromUserName());
+        return new ResponseTextMessage(wxName,message.getFromUserName(),name==null?"点击":(name+","+"点击"));
     }
 
     private Message handleView(RequestEventMessage message){
-        return new ResponseTextMessage(wxName,message.getFromUserName(),"跳转");
+        String name= CommonConst.USER_ID_TO_NAME.get(message.getFromUserName());
+        return new ResponseTextMessage(wxName,message.getFromUserName(),name==null?"跳转":(name+","+"跳转"));
     }
 }

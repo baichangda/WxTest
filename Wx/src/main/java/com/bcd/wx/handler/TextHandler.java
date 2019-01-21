@@ -4,6 +4,7 @@ import com.bcd.wx.data.Message;
 import com.bcd.wx.data.MsgType;
 import com.bcd.wx.data.request.RequestTextMessage;
 import com.bcd.wx.data.response.ResponseTextMessage;
+import com.bcd.wx.define.CommonConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +26,8 @@ public class TextHandler extends Handler<RequestTextMessage> {
     @Override
     public Message handle(RequestTextMessage message) throws Exception {
         logger.debug(message.toString());
-        return new ResponseTextMessage(wxName,message.getFromUserName(),message.getContent());
+        String name=CommonConst.USER_ID_TO_NAME.get(message.getFromUserName());
+        return new ResponseTextMessage(wxName,message.getFromUserName(),name==null?message.getContent():(name+","+message.getContent()));
     }
 
 }
