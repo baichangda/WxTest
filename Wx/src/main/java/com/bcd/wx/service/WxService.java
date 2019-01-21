@@ -112,6 +112,7 @@ public class WxService {
         if(accessTokenData==null||(System.currentTimeMillis()-(long)accessTokenData[2])>(long)accessTokenData[1]){
             ResponseEntity<JsonNode> responseEntity=restTemplate.getForEntity("https://api.weixin.qq.com/cgi-bin/token?grant_type={1}&appid={2}&secret={3}",JsonNode.class,"client_credential",wxToken,wxAesKey);
             JsonNode jsonNode= responseEntity.getBody();
+            logger.debug("getAccessToken Res: "+JsonUtil.toJson(jsonNode));
             String accessToken=jsonNode.get("access_token").asText();
             int expiresIn=jsonNode.get("expires_in").asInt();
             accessTokenData=new Object[]{accessToken,expiresIn*1000L,System.currentTimeMillis()};
