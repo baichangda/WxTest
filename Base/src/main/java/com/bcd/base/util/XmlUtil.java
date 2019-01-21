@@ -19,10 +19,18 @@ import java.util.Map;
 public class XmlUtil {
     public final static XmlMapper GLOBAL_XML_MAPPER= withConfig(new XmlMapper());
 
+    public final static XmlMapper WX_XML_MAPPER= getWxXmlMapper();
+
     public static XmlMapper withConfig(XmlMapper xmlMapper){
         //1、应用json过滤器配置
         JsonUtil.withConfig(xmlMapper);
-        //2、配置时间转换和解析器
+        return xmlMapper;
+    }
+
+    public static XmlMapper getWxXmlMapper(){
+        //1、应用基础配置
+        XmlMapper xmlMapper=withConfig(new XmlMapper());
+        //2、配置时间转换和解析器(微信默认时间戳是秒单位)
         SimpleModule simpleModule=new SimpleModule();
         simpleModule.addSerializer(Date.class, new JsonSerializer<Date>() {
             @Override
@@ -45,17 +53,5 @@ public class XmlUtil {
         });
         xmlMapper.registerModule(simpleModule);
         return xmlMapper;
-    }
-
-    public static void main(String [] args) throws JsonProcessingException {
-        Map<String,Object> dataMap=new HashMap<>();
-        dataMap.put("A","a");
-        dataMap.put("B","b");
-        dataMap.put("C",new HashMap<String,String>(){{
-            put("D","d");
-        }});
-        String res= XmlUtil.GLOBAL_XML_MAPPER.writeValueAsString(dataMap);
-
-        System.out.println("\nRes: "+res);
     }
 }
