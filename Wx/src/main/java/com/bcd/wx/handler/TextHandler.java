@@ -1,21 +1,17 @@
 package com.bcd.wx.handler;
 
+import com.bcd.wx.data.Message;
 import com.bcd.wx.data.MsgType;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.XMLWriter;
+import com.bcd.wx.data.request.RequestTextMessage;
+import com.bcd.wx.data.response.ResponseTextMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.StringWriter;
-import java.util.Date;
 
 @Component
-public class TextHandler extends Handler {
+public class TextHandler extends Handler<RequestTextMessage> {
 
     private final static Logger logger= LoggerFactory.getLogger(TextHandler.class);
 
@@ -23,38 +19,13 @@ public class TextHandler extends Handler {
     String wxName;
 
     public TextHandler() {
-        super(MsgType.text);
+        super(MsgType.text,RequestTextMessage.class);
     }
 
     @Override
-    public String handle(Element root) throws Exception {
-
-        String fromUserName=root.elementText("FromUserName");
-        String content=root.elementText("Content");
-        return responseText(fromUserName,wxName,content);
+    public Message handle(RequestTextMessage message) throws Exception {
+        logger.debug(message.toString());
+        return new ResponseTextMessage(wxName,message.getFromUserName(),message.getContent());
     }
 
-    public final static String responseText(String toUserName,String wxName,String content) throws Exception{
-        Document res= DocumentHelper.createDocument();
-        Element resRoot= res.addElement("xml");
-        Element e1=resRoot.addElement("ToUserName");
-        e1.setText(toUserName);
-        Element e2=resRoot.addElement("FromUserName");
-        e2.setText(wxName);
-        Element e3=resRoot.addElement("CreateTime");
-        e3.setText(new Date().getTime()+"");
-        Element e4=resRoot.addElement("MsgType");
-        e4.setText(MsgType.text.name());
-        Element e5=resRoot.addElement("Content");
-        e5.setText(content);
-
-        String resStr;
-        try(StringWriter writer=new StringWriter()){
-            OutputFormat format = OutputFormat.createCompactFormat();
-            XMLWriter output = new XMLWriter(writer, format);
-            output.write(res);
-            resStr=writer.toString();
-        }
-        return resStr;
-    }
 }

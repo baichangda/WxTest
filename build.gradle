@@ -53,10 +53,6 @@ allprojects{
         compile ("com.aliyun:aliyun-java-sdk-live:${liveVersion}")
         //阿里云oss对象存储集成
         compile ("com.aliyun.oss:aliyun-sdk-oss:${ossVersion}")
-
-        // https://mvnrepository.com/artifact/dom4j/dom4j
-        compile group: 'dom4j', name: 'dom4j', version: '1.6.1'
-
     }
 
     compileJava{

@@ -1,25 +1,19 @@
 package com.bcd.wx.service;
 
-import com.bcd.wx.data.MsgType;
+import com.bcd.base.util.XmlUtil;
+import com.bcd.wx.data.Message;
+import com.bcd.wx.data.request.RequestEventMessage;
+import com.bcd.wx.data.response.ResponseTextMessage;
 import com.bcd.wx.handler.Handler;
-import com.bcd.wx.handler.TextHandler;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.XMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class WxService {
@@ -35,14 +29,14 @@ public class WxService {
     private final static Logger logger= LoggerFactory.getLogger(WxService.class);
 
     public String token(String signature, String timestamp, String nonce, String echostr) {
-        logger.info("\nsignature: "+signature+"\ntimestamp: "+timestamp+"\nnonce: "+nonce+"\nechostr: "+echostr+"\n");
+        logger.debug("\nsignature: "+signature+"\ntimestamp: "+timestamp+"\nnonce: "+nonce+"\nechostr: "+echostr+"\n");
         List<String> list=new ArrayList<>();
         list.add(nonce);
         list.add(timestamp);
         list.add(wxToken);
         Collections.sort(list);
         String res= DigestUtils.sha1Hex(list.stream().reduce((e1, e2)->e1+e2).orElse(""));
-        logger.info("\nres: "+res);
+        logger.debug("\nres: "+res);
         if(res.equals(signature)){
             return echostr;
         }else{
@@ -51,21 +45,26 @@ public class WxService {
     }
 
     public String handle(String data) {
-        logger.info("\ndata: "+data);
+        logger.debug("\ndata: "+data);
         try {
-            Document document= DocumentHelper.parseText(data);
-            Element root= document.getRootElement();
-            String msgType=root.elementText("MsgType");
+            JsonNode jsonNode =XmlUtil.GLOBAL_XML_MAPPER.readTree(data);
+            String msgType= jsonNode.get("MsgType").asText();
             Handler handler= Handler.MSG_TYPE_TO_HANDLER.get(msgType);
-            String res;
+            Message res;
             if(handler==null){
-                String fromUserName=root.elementText("FromUserName");
-                res= TextHandler.responseText(fromUserName,wxName,"暂不支持");
+                String toUserName=jsonNode.get("FromUserName").asText();
+                res=new ResponseTextMessage(wxName,toUserName,"暂不支持");
             }else{
-                res= handler.handle(root);
+                Object message= jsonNode.traverse(XmlUtil.GLOBAL_XML_MAPPER).readValueAs(handler.getClass());
+                if(message instanceof RequestEventMessage){
+                    ((RequestEventMessage) message).setData(jsonNode);
+                }
+                res= handler.handle((Message)message);
             }
-            logger.info("\nHandler Res: "+res);
-            return res;
+            String resStr=XmlUtil.GLOBAL_XML_MAPPER.writeValueAsString(res);
+            logger.debug("\nHandler Res: "+resStr);
+
+            return resStr;
         } catch (Exception e) {
             logger.error("\nHandler Failed",e);
             return "failed";
@@ -73,22 +72,11 @@ public class WxService {
     }
 
     public static void main(String [] args) throws IOException {
-        Document res= DocumentHelper.createDocument();
-        Element resRoot= res.addElement("xml");
-        Element e1=resRoot.addElement("ToUserName");
-        e1.setText("1");
-        Element e2=resRoot.addElement("FromUserName");
-        e2.setText("2");
-        Element e3=resRoot.addElement("CreateTime");
-        e3.setText(new Date().getTime()+"");
-        Element e4=resRoot.addElement("MsgType");
-        e4.setText("text");
-        Element e5=resRoot.addElement("Content");
-        e5.setText("3");
-        OutputFormat format = OutputFormat.createCompactFormat();
-        StringWriter writer=new StringWriter();
-        XMLWriter output = new XMLWriter(writer, format);
-        output.write(res);
-        logger.info("\nTextHandler Res: "+writer.toString());
+        Map<String,String> dataMap=new HashMap<>();
+        dataMap.put("A","a");
+        dataMap.put("B","b");
+        String res=XmlUtil.GLOBAL_XML_MAPPER.writeValueAsString(dataMap);
+
+        logger.info("\nRes: "+res);
     }
 }
