@@ -55,7 +55,7 @@ public class WxService {
                 String toUserName=jsonNode.get("FromUserName").asText();
                 res=new ResponseTextMessage(wxName,toUserName,"暂不支持");
             }else{
-                Object message= jsonNode.traverse(XmlUtil.GLOBAL_XML_MAPPER).readValueAs(handler.getClass());
+                Object message= jsonNode.traverse(XmlUtil.GLOBAL_XML_MAPPER).readValueAs(handler.getClazz());
                 if(message instanceof RequestEventMessage){
                     ((RequestEventMessage) message).setData(jsonNode);
                 }

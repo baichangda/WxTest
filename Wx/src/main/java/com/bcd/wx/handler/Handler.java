@@ -26,4 +26,20 @@ public abstract class Handler<T extends Message>{
     }
 
     public abstract Message handle(T message) throws Exception;
+
+    public MsgType getMsgType() {
+        return msgType;
+    }
+
+    public void setMsgType(MsgType msgType) {
+        this.msgType = msgType;
+    }
+
+    public Class<T> getClazz() {
+        return clazz;
+    }
+
+    public void setClazz(Class<T> clazz) {
+        this.clazz = clazz;
+    }
 }
