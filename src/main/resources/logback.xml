@@ -48,7 +48,8 @@
     <logger name="org.springframework.jdbc.core.JdbcTemplate" additivity="true" level="DEBUG" />
     <logger name="org.springframework.jdbc.core.StatementCreatorUtils" additivity="true" level="DEBUG" />
 
-    <logger name="com.bcd.wx.*" value="" additivity="true" level="DEBUG" />
+    <logger name="com.bcd.wx.service.WxService" additivity="true" level="DEBUG" />
+
     <!-- 日志输出级别 -->
     <root level="INFO">
         <appender-ref ref="STDOUT" />
