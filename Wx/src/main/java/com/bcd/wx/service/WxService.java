@@ -1,6 +1,7 @@
 package com.bcd.wx.service;
 
 import com.bcd.base.util.XmlUtil;
+import com.bcd.wx.data.JsonNodeDataSupport;
 import com.bcd.wx.data.Message;
 import com.bcd.wx.data.request.RequestEventMessage;
 import com.bcd.wx.data.response.ResponseTextMessage;
@@ -56,8 +57,8 @@ public class WxService {
                 res=new ResponseTextMessage(wxName,toUserName,"暂不支持");
             }else{
                 Object message= jsonNode.traverse(XmlUtil.WX_XML_MAPPER).readValueAs(handler.getClazz());
-                if(message instanceof RequestEventMessage){
-                    ((RequestEventMessage) message).setData(jsonNode);
+                if(message instanceof JsonNodeDataSupport){
+                    ((JsonNodeDataSupport) message).setData(jsonNode);
                 }
                 res= handler.handle((Message)message);
             }

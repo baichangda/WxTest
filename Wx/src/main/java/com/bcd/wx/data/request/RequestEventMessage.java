@@ -1,12 +1,13 @@
 package com.bcd.wx.data.request;
 
 import com.bcd.wx.data.Event;
+import com.bcd.wx.data.JsonNodeDataSupport;
 import com.bcd.wx.data.Message;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlCData;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
-public class RequestEventMessage extends Message {
+public class RequestEventMessage extends Message implements JsonNodeDataSupport{
     @JacksonXmlProperty(localName = "Event")
     @JacksonXmlCData
     protected Event event;
