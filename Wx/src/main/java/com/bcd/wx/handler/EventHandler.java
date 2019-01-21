@@ -14,7 +14,11 @@ public class EventHandler extends Handler{
     public String handle(Element root) throws Exception {
         String event=root.elementText("Event");
         switch (event){
-            //用户未关注时，进行关注后的事件推送
+            //用户取消关注时候
+            case "unsubscribe":{
+                return handleUnSubscribe(root);
+            }
+            //用户未关注时，进行关注后的事件推送(关注或者扫描二维码)
             case "subscribe":{
                 return handleSubscribe(root);
             }
@@ -41,7 +45,11 @@ public class EventHandler extends Handler{
     }
 
     private String handleSubscribe(Element root){
-        return "欢迎第一次订阅";
+        return "欢迎订阅";
+    }
+
+    private String handleUnSubscribe(Element root){
+        return "取消订阅";
     }
 
     private String handleScan(Element root){
