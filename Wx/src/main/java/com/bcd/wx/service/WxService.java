@@ -99,8 +99,8 @@ public class WxService {
             put("content",text);
         }});
         dataMap.put("msgtype", MsgType.text);
-        ResponseEntity<String> responseEntity= restTemplate.postForEntity("https://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token="+wxToken, dataMap,String.class);
-        logger.debug("SendAll Res: "+responseEntity.getBody());
+        String res= restTemplate.postForObject("https://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token="+wxToken, dataMap,String.class);
+        logger.debug("SendAll Res: "+res);
 
     }
 }
