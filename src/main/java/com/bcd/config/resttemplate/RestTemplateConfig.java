@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -30,6 +31,9 @@ public class RestTemplateConfig {
         List<HttpMessageConverter<?>> messageConverters=new ArrayList<>();
         //在此添加转换器配置
         messageConverters.add(httpMessageConverter);
+        //添加字符串转换器
+        StringHttpMessageConverter stringHttpMessageConverter=new StringHttpMessageConverter();
+        messageConverters.add(stringHttpMessageConverter);
         restTemplate.setMessageConverters(messageConverters);
         return restTemplate;
     }
