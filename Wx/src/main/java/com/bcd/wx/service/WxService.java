@@ -52,12 +52,16 @@ public class WxService {
             Element root= document.getRootElement();
             String msgType=root.elementText("MsgType");
             Handler handler= Handler.MSG_TYPE_TO_HANDLER.get(msgType);
+            String res;
             if(handler==null){
-                return "failed";
+                res= "failed";
+            }else{
+                res= handler.handle(root);
             }
-            return handler.handle(root);
+            logger.info("\nHandler Res: "+res);
+            return res;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("\nHandler Failed",e);
             return "failed";
         }
 

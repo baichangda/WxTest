@@ -2,10 +2,13 @@ package com.bcd.wx.handler;
 
 import com.bcd.wx.data.MsgType;
 import org.dom4j.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class EventHandler extends Handler{
+    private final static Logger logger= LoggerFactory.getLogger(EventHandler.class);
     public EventHandler() {
         super(MsgType.event);
     }

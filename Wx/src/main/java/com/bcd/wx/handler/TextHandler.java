@@ -52,7 +52,7 @@ public class TextHandler extends Handler {
             output.write(res);
             resStr=writer.toString();
         }
-        logger.info("\nTextHandler Res: "+resStr);
+
         return resStr;
     }
 }
