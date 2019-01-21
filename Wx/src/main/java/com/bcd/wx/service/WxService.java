@@ -1,6 +1,7 @@
 package com.bcd.wx.service;
 
 import com.bcd.base.util.JsonUtil;
+import com.bcd.wx.handler.Handler;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -25,8 +26,7 @@ public class WxService {
     @Value("${wx.token}")
     String wxToken;
 
-    @Value("${wx.name}")
-    String wxName;
+
 
     private final static Logger logger= LoggerFactory.getLogger(WxService.class);
 
@@ -51,31 +51,12 @@ public class WxService {
         try {
             Document document= DocumentHelper.parseText(data);
             Element root= document.getRootElement();
-            String fromUserName=root.elementText("FromUserName");
-            String content=root.elementText("Content");
-
-            Document res= DocumentHelper.createDocument();
-            Element resRoot= res.addElement("xml");
-            Element e1=resRoot.addElement("ToUserName");
-            e1.setText(fromUserName);
-            Element e2=resRoot.addElement("FromUserName");
-            e2.setText(wxName);
-            Element e3=resRoot.addElement("CreateTime");
-            e3.setText(new Date().getTime()+"");
-            Element e4=resRoot.addElement("MsgType");
-            e4.setText("text");
-            Element e5=resRoot.addElement("Content");
-            e5.setText(content);
-
-            String resStr;
-            try(StringWriter writer=new StringWriter()){
-                OutputFormat format = OutputFormat.createCompactFormat();
-                XMLWriter output = new XMLWriter(writer, format);
-                output.write(res);
-                resStr=writer.toString();
+            String msgType=root.elementText("MsgType");
+            Handler handler= Handler.MSG_TYPE_TO_HANDLER.get(msgType);
+            if(handler==null){
+                return "failed";
             }
-            logger.info("\nres: "+resStr);
-            return resStr;
+            return handler.handle(root);
         } catch (Exception e) {
             e.printStackTrace();
             return "failed";
@@ -100,6 +81,6 @@ public class WxService {
         StringWriter writer=new StringWriter();
         XMLWriter output = new XMLWriter(writer, format);
         output.write(res);
-        logger.info("\nres: "+writer.toString());
+        logger.info("\nTextHandler Res: "+writer.toString());
     }
 }
