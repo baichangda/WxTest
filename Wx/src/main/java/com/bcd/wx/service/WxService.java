@@ -1,17 +1,23 @@
 package com.bcd.wx.service;
 
+import com.bcd.base.util.JsonUtil;
 import com.bcd.base.util.XmlUtil;
 import com.bcd.wx.data.JsonNodeDataSupport;
 import com.bcd.wx.data.Message;
-import com.bcd.wx.data.request.RequestEventMessage;
+import com.bcd.wx.data.MsgType;
 import com.bcd.wx.data.response.ResponseTextMessage;
 import com.bcd.wx.handler.Handler;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.http.HttpEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.*;
@@ -24,6 +30,9 @@ public class WxService {
 
     @Value("${wx.token}")
     String wxToken;
+
+    @Autowired
+    RestTemplate restTemplate;
 
 
 
@@ -79,5 +88,19 @@ public class WxService {
         String res=XmlUtil.WX_XML_MAPPER.writeValueAsString(dataMap);
 
         logger.info("\nRes: "+res);
+    }
+
+    public void sendAll(String text) {
+        Map<String,Object> dataMap=new HashMap<>();
+        dataMap.put("filter",new HashMap<String,Object>(){{
+            put("is_to_all",Boolean.TRUE);
+        }});
+        dataMap.put("text",new HashMap<String,String>(){{
+            put("content",text);
+        }});
+        dataMap.put("msgtype", MsgType.text);
+        ResponseEntity<String> responseEntity= restTemplate.postForEntity("https://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token="+wxToken, dataMap,String.class);
+        logger.debug("SendAll Res: "+responseEntity.getBody());
+
     }
 }

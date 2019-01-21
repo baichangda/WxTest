@@ -32,4 +32,11 @@ public class WxController {
     public String handle(@RequestBody String data){
        return wxService.handle(data);
     }
+
+
+    @RequestMapping(value = "/sendAll",method = RequestMethod.POST)
+    @ApiOperation(value = "群发消息",notes = "群发消息")
+    public void sendAll(@RequestBody String text){
+        wxService.sendAll(text);
+    }
 }
