@@ -31,9 +31,6 @@ public class RestTemplateConfig {
         List<HttpMessageConverter<?>> messageConverters=new ArrayList<>();
         //在此添加转换器配置
         messageConverters.add(httpMessageConverter);
-        //添加字符串转换器
-        StringHttpMessageConverter stringHttpMessageConverter=new StringHttpMessageConverter();
-        messageConverters.add(stringHttpMessageConverter);
         restTemplate.setMessageConverters(messageConverters);
         return restTemplate;
     }
