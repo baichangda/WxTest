@@ -1,6 +1,5 @@
 package com.bcd.wx.data;
 
-import com.bcd.wx.data.MsgType;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlCData;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
@@ -26,7 +25,9 @@ public class Message {
     @JacksonXmlCData
     protected MsgType msgType;
 
-
+    public Message() {
+        this.createTime=new Date();
+    }
 
     public String getToUserName() {
         return toUserName;
