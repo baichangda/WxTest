@@ -32,6 +32,12 @@ public class WxService {
     @Value("${wx.aesKey}")
     String wxAesKey;
 
+    @Value("${wx.appId}")
+    String wxAppId;
+
+    @Value("${wx.appSecret}")
+    String wxAppSecret;
+
     @Autowired
     RestTemplate restTemplate;
 
@@ -110,7 +116,7 @@ public class WxService {
 
     public String getAccessToken(){
         if(accessTokenData==null||(System.currentTimeMillis()-(long)accessTokenData[2])>(long)accessTokenData[1]){
-            ResponseEntity<JsonNode> responseEntity=restTemplate.getForEntity("https://api.weixin.qq.com/cgi-bin/token?grant_type={1}&appid={2}&secret={3}",JsonNode.class,"client_credential",wxToken,wxAesKey);
+            ResponseEntity<JsonNode> responseEntity=restTemplate.getForEntity("https://api.weixin.qq.com/cgi-bin/token?grant_type={1}&appid={2}&secret={3}",JsonNode.class,"client_credential",wxAppId,wxAppSecret);
             JsonNode jsonNode= responseEntity.getBody();
             logger.debug("getAccessToken Res: "+JsonUtil.toJson(jsonNode));
             String accessToken=jsonNode.get("access_token").asText();
