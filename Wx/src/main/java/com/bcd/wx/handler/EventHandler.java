@@ -26,19 +26,19 @@ public class EventHandler extends Handler{
                 return handleSubscribe(root);
             }
             //用户已关注时的事件推送
-            case "SCAN":{
+            case "scan":{
                 return handleScan(root);
             }
             //上报地理位置事件
-            case "LOCATION":{
+            case "location":{
                 return handleLocation(root);
             }
             //点击菜单拉取消息时的事件推送
-            case "CLICK":{
+            case "click":{
                 return handleClick(root);
             }
             //点击菜单跳转链接时的事件推送
-            case "VIEW":{
+            case "view":{
                 return handleView(root);
             }
             default:{
