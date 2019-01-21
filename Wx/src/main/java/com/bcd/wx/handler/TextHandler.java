@@ -31,17 +31,20 @@ public class TextHandler extends Handler {
 
         String fromUserName=root.elementText("FromUserName");
         String content=root.elementText("Content");
+        return responseText(fromUserName,wxName,content);
+    }
 
+    public final static String responseText(String toUserName,String wxName,String content) throws Exception{
         Document res= DocumentHelper.createDocument();
         Element resRoot= res.addElement("xml");
         Element e1=resRoot.addElement("ToUserName");
-        e1.setText(fromUserName);
+        e1.setText(toUserName);
         Element e2=resRoot.addElement("FromUserName");
         e2.setText(wxName);
         Element e3=resRoot.addElement("CreateTime");
         e3.setText(new Date().getTime()+"");
         Element e4=resRoot.addElement("MsgType");
-        e4.setText(msgType.name());
+        e4.setText(MsgType.text.name());
         Element e5=resRoot.addElement("Content");
         e5.setText(content);
 
@@ -52,7 +55,6 @@ public class TextHandler extends Handler {
             output.write(res);
             resStr=writer.toString();
         }
-
         return resStr;
     }
 }

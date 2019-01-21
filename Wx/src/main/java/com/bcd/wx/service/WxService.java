@@ -1,6 +1,8 @@
 package com.bcd.wx.service;
 
+import com.bcd.wx.data.MsgType;
 import com.bcd.wx.handler.Handler;
+import com.bcd.wx.handler.TextHandler;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -21,6 +23,9 @@ import java.util.List;
 
 @Service
 public class WxService {
+
+    @Value("${wx.name}")
+    String wxName;
 
     @Value("${wx.token}")
     String wxToken;
@@ -54,7 +59,8 @@ public class WxService {
             Handler handler= Handler.MSG_TYPE_TO_HANDLER.get(msgType);
             String res;
             if(handler==null){
-                res= "failed";
+                String fromUserName=root.elementText("FromUserName");
+                res= TextHandler.responseText(fromUserName,wxName,"暂不支持");
             }else{
                 res= handler.handle(root);
             }
@@ -64,7 +70,6 @@ public class WxService {
             logger.error("\nHandler Failed",e);
             return "failed";
         }
-
     }
 
     public static void main(String [] args) throws IOException {
