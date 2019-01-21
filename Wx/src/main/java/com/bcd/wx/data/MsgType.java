@@ -14,5 +14,7 @@ public enum MsgType {
     //定位
     location,
     //链接
-    link
+    link,
+    //事件通知
+    event
 }

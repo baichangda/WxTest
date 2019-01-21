@@ -1,6 +1,5 @@
 package com.bcd.wx.service;
 
-import com.bcd.base.util.JsonUtil;
 import com.bcd.wx.handler.Handler;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.dom4j.Document;
