@@ -9,12 +9,10 @@ import com.bcd.wx.data.response.ResponseTextMessage;
 import com.bcd.wx.handler.Handler;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.http.HttpEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -31,8 +29,14 @@ public class WxService {
     @Value("${wx.token}")
     String wxToken;
 
+    @Value("${wx.aesKey}")
+    String wxAesKey;
+
     @Autowired
     RestTemplate restTemplate;
+
+    //token,过期时间,获取时间
+    Object[] accessTokenData;
 
 
 
@@ -99,8 +103,19 @@ public class WxService {
             put("content",text);
         }});
         dataMap.put("msgtype", MsgType.text);
-        ResponseEntity<Map> responseEntity= restTemplate.postForEntity("https://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token="+wxToken, dataMap,Map.class);
+        ResponseEntity<Map> responseEntity= restTemplate.postForEntity("https://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token="+getAccessToken(), dataMap,Map.class);
         logger.debug("SendAll Res: "+JsonUtil.toJson(responseEntity.getBody()));
 
+    }
+
+    public String getAccessToken(){
+        if(accessTokenData==null||(System.currentTimeMillis()-(long)accessTokenData[2])>(long)accessTokenData[1]){
+            ResponseEntity<JsonNode> responseEntity=restTemplate.getForEntity("https://api.weixin.qq.com/cgi-bin/token?grant_type={1}&appid={2}&secret={3}",JsonNode.class,"client_credential",wxToken,wxAesKey);
+            JsonNode jsonNode= responseEntity.getBody();
+            String accessToken=jsonNode.get("access_token").asText();
+            int expiresIn=jsonNode.get("expires_in").asInt();
+            accessTokenData=new Object[]{accessToken,expiresIn*1000L,System.currentTimeMillis()};
+        }
+        return accessTokenData[0].toString();
     }
 }
