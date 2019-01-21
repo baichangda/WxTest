@@ -11,19 +11,19 @@ import java.util.Date;
 public class Message {
 
     @JacksonXmlProperty(localName = "ToUserName")
-//    @JacksonXmlCData
+    @JacksonXmlCData
     protected String toUserName;
 
     @JacksonXmlProperty(localName = "FromUserName")
-//    @JacksonXmlCData
+    @JacksonXmlCData
     protected String fromUserName;
 
     @JacksonXmlProperty(localName = "CreateTime")
-//    @JacksonXmlCData
+    @JacksonXmlCData
     protected Date createTime;
 
     @JacksonXmlProperty(localName = "MsgType")
-//    @JacksonXmlCData
+    @JacksonXmlCData
     protected MsgType msgType;
 
 

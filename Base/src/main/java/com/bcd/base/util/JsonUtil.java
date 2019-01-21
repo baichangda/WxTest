@@ -48,7 +48,7 @@ public class JsonUtil {
             SerializerProvider provider=new DefaultSerializerProvider.Impl().createInstance(t.getSerializationConfig(),t.getSerializerFactory());
             JsonSerializer mapSerializer = provider.findValueSerializer(Map.class);
             SimpleModule simpleModule=new SimpleModule();
-            simpleModule.addSerializer(Map.class,mapSerializer.withFilterId("incar"));
+            simpleModule.addSerializer(Map.class,mapSerializer.withFilterId("bcd"));
             //2、设置所有Number属性的 输出为字符串
             simpleModule.addSerializer(Number.class, ToStringSerializer.instance);
             t.registerModule(simpleModule);

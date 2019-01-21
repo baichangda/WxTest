@@ -7,7 +7,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 public class ResponseTextMessage extends Message{
     @JacksonXmlProperty(localName = "Content")
-//    @JacksonXmlCData
+    @JacksonXmlCData
     protected String content;
 
     public String getContent() {
