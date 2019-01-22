@@ -34,7 +34,7 @@ public class AccountModeHandler extends ModeHandler{
         StringBuilder msg=new StringBuilder();
         msg.append("示例命令如下:\n");
         msg.append("添加借款,格式如下\n");
-        msg.append("张三 100 借用钱(备注可不传)");
+        msg.append("张三 100 借用钱(备注可不传)\n");
         msg.append("查询借款信息,格式如下\n");
         msg.append("1 姓名(不传则查出所有)\n");
         msg.append("查询借款明细信息,格式如下\n");
