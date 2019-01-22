@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -73,7 +75,8 @@ public class AccountModeHandler extends ModeHandler{
                 if(accountDetailBeanList.size()==0){
                     return "查询不到信息";
                 }else{
-                    return accountDetailBeanList.stream().map(e->e.getBorrower()+" "+e.getMoney()).reduce((e1,e2)->e1+"\n"+e2).get();
+                    DateTimeFormatter formatter=DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.of("CTT"));
+                    return accountDetailBeanList.stream().map(e->e.getBorrower()+" "+e.getMoney()+" "+formatter.format(e.getTime().toInstant())).reduce((e1,e2)->e1+"\n"+e2).get();
                 }
             }
             case "3":{
