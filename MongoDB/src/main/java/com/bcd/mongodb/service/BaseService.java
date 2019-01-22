@@ -7,6 +7,7 @@ import com.bcd.mongodb.anno.Unique;
 import com.bcd.mongodb.repository.BaseRepository;
 import com.bcd.mongodb.util.ConditionUtil;
 import com.bcd.mongodb.util.MongoUtil;
+import com.mongodb.client.result.DeleteResult;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -188,7 +189,6 @@ public class BaseService<T,K extends Serializable>{
         repository.deleteById(id);
     }
 
-    @Transactional
     public void deleteById(K[] ids){
         for(int i=0;i<=ids.length-1;i++){
             repository.deleteById(ids[i]);
@@ -197,6 +197,11 @@ public class BaseService<T,K extends Serializable>{
 
     public void deleteAll(){
         repository.deleteAll();
+    }
+
+    public DeleteResult delete(Condition condition){
+        Query query= ConditionUtil.toQuery(condition);
+        return mongoTemplate.remove(query,beanClass);
     }
 
     /**
