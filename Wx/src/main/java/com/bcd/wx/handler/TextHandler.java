@@ -61,6 +61,7 @@ public class TextHandler extends Handler<RequestTextMessage> {
             //7.1、如果是退出命令
             if("0".equals(content)){
                 CommonConst.USER_ID_TO_EXPIRE_MODE.remove(fromUserName);
+                return new ResponseTextMessage(wxName, fromUserName, "退出["+expireMode.mode.getName()+"]模式");
             }else {
                 //7.2、其他
                 //7.2.1、刷新时间
