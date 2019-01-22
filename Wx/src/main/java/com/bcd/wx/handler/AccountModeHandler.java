@@ -86,7 +86,9 @@ public class AccountModeHandler extends ModeHandler{
                 List<Condition> conditionList=new ArrayList<>();
                 conditionList.add(new StringCondition("userId",userId));
                 conditionList.add(new StringCondition("borrower",arr[1]));
-                DeleteResult result=accountService.delete(Condition.and(conditionList));
+                Condition condition= Condition.and(conditionList);
+                DeleteResult result=accountService.delete(condition);
+                accountDetailService.delete(condition);
                 if(result.getDeletedCount()==0){
                     return "找不到要删除的信息";
                 }else{
