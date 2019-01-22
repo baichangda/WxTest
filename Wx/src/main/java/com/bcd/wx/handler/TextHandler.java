@@ -77,12 +77,8 @@ public class TextHandler extends Handler<RequestTextMessage> {
     }
 
     private String checkInMode(String content){
-        String msg=CommonConst.MODE_LIST.stream().map(e->e.getName()).filter(e-> e.contains(content)).reduce("",(e1,e2)->e1+" "+e2,(e1,e2)->e1+"\n"+e2);
-        if("".equals(msg)){
-            return null;
-        }else{
-            return msg;
-        }
+        String msg=CommonConst.MODE_LIST.stream().map(e->e.getId()+" "+e.getName()).filter(e-> e.contains(content)).reduce((e1,e2)->e1+"\n"+e2).orElse(null);
+        return msg;
     }
 
 }
