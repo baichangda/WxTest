@@ -41,6 +41,7 @@ public class AccountModeHandler extends ModeHandler{
                 ));
                 if(accountBean==null){
                     accountBean=new AccountBean();
+                    accountBean.setUserId(userId);
                     accountBean.setBorrower(borrower);
                     accountBean.setCreateTime(new Date());
                 }
