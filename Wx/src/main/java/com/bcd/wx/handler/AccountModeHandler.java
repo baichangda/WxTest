@@ -7,6 +7,7 @@ import com.bcd.wx.bean.AccountDetailBean;
 import com.bcd.wx.data.Mode;
 import com.bcd.wx.service.AccountDetailService;
 import com.bcd.wx.service.AccountService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +17,10 @@ import java.util.Date;
 @Component
 public class AccountModeHandler extends ModeHandler{
 
-    @Service
+    @Autowired
     AccountService accountService;
 
-    @Service
+    @Autowired
     AccountDetailService accountDetailService;
 
     public AccountModeHandler() {
