@@ -35,14 +35,16 @@ public class AccountModeHandler extends ModeHandler{
     public String getHelp(){
         StringBuilder msg=new StringBuilder();
         msg.append("示例命令如下:\n");
-        msg.append("添加借款,格式如下\n");
+        msg.append("--添加借款,格式:\n");
         msg.append("张三 100 借用钱(备注可不传)\n");
-        msg.append("查询借款信息,格式如下\n");
+        msg.append("--查询借款信息,格式:\n");
         msg.append("1 姓名(不传则查出所有)\n");
-        msg.append("查询借款明细信息,格式如下\n");
+        msg.append("--查询借款明细信息,格式:\n");
         msg.append("2 姓名(不传则查出所有)\n");
-        msg.append("删除借款信息\n");
+        msg.append("--删除借款信息,格式:\n");
         msg.append("3 姓名");
+        msg.append("--退出[记账]模式");
+        msg.append("0");
         return msg.toString();
     }
 

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 
 
 @Component
@@ -31,10 +32,10 @@ public class TextHandler extends Handler<RequestTextMessage> {
         String fromUserName=message.getFromUserName();
         logger.debug(message.toString());
         //1、先检测当前用户是否处于模式下
-        Mode mode= CommonConst.USER_ID_TO_MODE.get(fromUserName);
-        if(mode==null){
+        ExpireMode expireMode= CommonConst.USER_ID_TO_EXPIRE_MODE.get(fromUserName);
+        if(expireMode==null||expireMode.expired()){
             //2、如果不在模式下,则检测当前用户输入的内容是否对应模式编号
-            mode=getMode(content);
+            Mode mode=getMode(content);
             if(mode==null){
                 //3、如果输入的不是编号,则检测输入的是否是模式名称部分字符
                 String tipMsg=checkInMode(content);
@@ -52,12 +53,15 @@ public class TextHandler extends Handler<RequestTextMessage> {
                 }
             }else{
                 //6、如果输入的是模式编号,则进入对应模式,同时返回提示信息
-                CommonConst.USER_ID_TO_MODE.put(fromUserName,mode,CommonConst.MODE_EXPIRE_MILLS);
+                CommonConst.USER_ID_TO_EXPIRE_MODE.put(fromUserName,new ExpireMode(mode,new Date()));
                 return new ResponseTextMessage(wxName,fromUserName,"进入["+mode.getName()+"]模式");
             }
         }else{
             //7、如果在模式下面,调用对应模式逻辑
-            ModeHandler modeHandler= CommonConst.MODE_TO_HANDLER.get(mode);
+            //7.1、刷新时间
+            expireMode.inTime=new Date();
+            ModeHandler modeHandler= CommonConst.MODE_TO_HANDLER.get(expireMode.mode);
+            //7.2、调用handler处理对应逻辑
             if(modeHandler==null){
                 return new ResponseTextMessage(wxName,fromUserName,"错误");
             }else{
@@ -79,6 +83,20 @@ public class TextHandler extends Handler<RequestTextMessage> {
     private String checkInMode(String content){
         String msg=CommonConst.MODE_LIST.stream().map(e->e.getId()+" "+e.getName()).filter(e-> e.contains(content)).reduce((e1,e2)->e1+"\n"+e2).orElse(null);
         return msg;
+    }
+
+    public class ExpireMode{
+        Mode mode;
+        Date inTime;
+
+        public ExpireMode(Mode mode, Date inTime) {
+            this.mode = mode;
+            this.inTime = inTime;
+        }
+
+        public boolean expired(){
+            return (System.currentTimeMillis()-inTime.getTime())>CommonConst.MODE_EXPIRE_MILLS;
+        }
     }
 
 }

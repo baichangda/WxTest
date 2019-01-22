@@ -3,8 +3,10 @@ package com.bcd.wx.define;
 import com.bcd.base.map.ExpireConcurrentMap;
 import com.bcd.wx.data.Mode;
 import com.bcd.wx.handler.ModeHandler;
+import com.bcd.wx.handler.TextHandler;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CommonConst {
     public final static Map<String,String> USER_ID_TO_NAME=new HashMap<>();
@@ -20,8 +22,8 @@ public class CommonConst {
         MODE_LIST.add(Mode.ACCOUNT_MODE);
     }
 
-    public final static ExpireConcurrentMap<String,Mode> USER_ID_TO_MODE=new ExpireConcurrentMap<>();
+    public final static Map<String,TextHandler.ExpireMode> USER_ID_TO_EXPIRE_MODE=new ConcurrentHashMap<>();
     public final static long MODE_EXPIRE_MILLS=2*60*1000L;
 
-    public final static Map<Mode,ModeHandler> MODE_TO_HANDLER=new HashMap<>();
+    public final static EnumMap<Mode,ModeHandler> MODE_TO_HANDLER=new EnumMap<>(Mode.class);
 }
