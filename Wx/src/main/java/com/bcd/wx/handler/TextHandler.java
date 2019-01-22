@@ -59,10 +59,10 @@ public class TextHandler extends Handler<RequestTextMessage> {
             //7、如果在模式下面,调用对应模式逻辑
             ModeHandler modeHandler= CommonConst.MODE_TO_HANDLER.get(mode);
             if(modeHandler==null){
+                return new ResponseTextMessage(wxName,fromUserName,"错误");
+            }else{
                 String msg=modeHandler.handle(fromUserName,content);
                 return new ResponseTextMessage(wxName,fromUserName,msg);
-            }else{
-                return new ResponseTextMessage(wxName,fromUserName,"错误");
             }
         }
     }
