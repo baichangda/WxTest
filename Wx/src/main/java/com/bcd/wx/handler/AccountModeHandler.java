@@ -5,6 +5,7 @@ import com.bcd.base.condition.impl.StringCondition;
 import com.bcd.wx.bean.AccountBean;
 import com.bcd.wx.bean.AccountDetailBean;
 import com.bcd.wx.data.Mode;
+import com.bcd.wx.define.CommonConst;
 import com.bcd.wx.service.AccountDetailService;
 import com.bcd.wx.service.AccountService;
 import com.mongodb.client.result.DeleteResult;
@@ -43,16 +44,13 @@ public class AccountModeHandler extends ModeHandler{
         msg.append("2 姓名(不传则查出所有)\n");
         msg.append("--删除借款信息,格式:\n");
         msg.append("3 姓名");
-        msg.append("--退出[记账]模式");
-        msg.append("0");
         return msg.toString();
     }
 
     @Override
     public String handle(String userId,String content) {
-        String trimContent=content.trim();
         //帮助
-        String[] arr=trimContent.split(" ");
+        String[] arr=content.split(" ");
         switch (arr[0]){
             case "1":{
                 List<Condition> conditionList=new ArrayList<>();

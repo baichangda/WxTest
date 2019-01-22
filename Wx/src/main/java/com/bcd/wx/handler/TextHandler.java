@@ -28,7 +28,7 @@ public class TextHandler extends Handler<RequestTextMessage> {
 
     @Override
     public Message handle(RequestTextMessage message) throws Exception {
-        String content=message.getContent();
+        String content=message.getContent().trim();
         String fromUserName=message.getFromUserName();
         logger.debug(message.toString());
         //1、先检测当前用户是否处于模式下
@@ -58,15 +58,21 @@ public class TextHandler extends Handler<RequestTextMessage> {
             }
         }else{
             //7、如果在模式下面,调用对应模式逻辑
-            //7.1、刷新时间
-            expireMode.inTime=new Date();
-            ModeHandler modeHandler= CommonConst.MODE_TO_HANDLER.get(expireMode.mode);
-            //7.2、调用handler处理对应逻辑
-            if(modeHandler==null){
-                return new ResponseTextMessage(wxName,fromUserName,"错误");
-            }else{
-                String msg=modeHandler.handle(fromUserName,content);
-                return new ResponseTextMessage(wxName,fromUserName,msg);
+            //7.1、如果是退出命令
+            if("0".equals(content)){
+                CommonConst.USER_ID_TO_EXPIRE_MODE.remove(fromUserName);
+            }else {
+                //7.2、其他
+                //7.2.1、刷新时间
+                expireMode.inTime = new Date();
+                ModeHandler modeHandler = CommonConst.MODE_TO_HANDLER.get(expireMode.mode);
+                //7.2.2、调用handler处理对应逻辑
+                if (modeHandler == null) {
+                    return new ResponseTextMessage(wxName, fromUserName, "错误");
+                } else {
+                    String msg = modeHandler.handle(fromUserName, content);
+                    return new ResponseTextMessage(wxName, fromUserName, msg);
+                }
             }
         }
     }
