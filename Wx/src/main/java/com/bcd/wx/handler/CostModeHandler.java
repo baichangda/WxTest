@@ -78,7 +78,7 @@ public class CostModeHandler extends ModeHandler{
                         date=new Date();
                     }else{
                         String dateStr=arr[i].substring(1);
-                        date= DateZoneUtil.stringToDate(dateStr,"yyyyMMddHHmmss");
+                        date= DateZoneUtil.stringToDate(dateStr+"000101","yyyyMMddHHmmss");
                     }
 
                     //2.1.3、根据条件格式化日期并组装条件
