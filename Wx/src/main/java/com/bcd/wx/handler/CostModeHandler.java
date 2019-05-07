@@ -1,7 +1,9 @@
 package com.bcd.wx.handler;
 
 import com.bcd.wx.data.Mode;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CostModeHandler extends ModeHandler{
     public CostModeHandler() {
         super(Mode.COST_MODE);
