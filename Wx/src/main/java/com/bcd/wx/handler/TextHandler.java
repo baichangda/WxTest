@@ -79,7 +79,7 @@ public class TextHandler extends Handler<RequestTextMessage> {
     }
 
     private Mode getMode(String content){
-        for (Mode mode : CommonConst.MODE_LIST) {
+        for (Mode mode : CommonConst.MODE_TO_HANDLER.keySet()) {
             if(mode.getId().equals(content)){
                 return mode;
             }
@@ -88,7 +88,7 @@ public class TextHandler extends Handler<RequestTextMessage> {
     }
 
     private String checkInMode(String content){
-        String msg=CommonConst.MODE_LIST.stream().map(e->e.getId()+" "+e.getName()).filter(e-> e.contains(content)).reduce((e1,e2)->e1+"\n"+e2).orElse(null);
+        String msg=CommonConst.MODE_TO_HANDLER.keySet().stream().map(e->e.getId()+" "+e.getName()).filter(e-> e.contains(content)).reduce((e1,e2)->e1+"\n"+e2).orElse(null);
         return msg;
     }
 

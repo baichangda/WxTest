@@ -17,11 +17,6 @@ public class CommonConst {
     }
 
 
-    public final static List<Mode> MODE_LIST=new ArrayList<>();
-    static {
-        MODE_LIST.add(Mode.ACCOUNT_MODE);
-    }
-
     public final static Map<String,TextHandler.ExpireMode> USER_ID_TO_EXPIRE_MODE=new ConcurrentHashMap<>();
     public final static long MODE_EXPIRE_MILLS=2*60*1000L;
 
