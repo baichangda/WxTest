@@ -2,6 +2,7 @@ package com.bcd.wx.handler;
 
 import com.bcd.base.condition.Condition;
 import com.bcd.base.condition.impl.DateCondition;
+import com.bcd.base.util.DateUtil;
 import com.bcd.base.util.DateZoneUtil;
 import com.bcd.base.util.ExceptionUtil;
 import com.bcd.wx.bean.CostBean;
@@ -77,7 +78,7 @@ public class CostModeHandler extends ModeHandler{
                         date=new Date();
                     }else{
                         String dateStr=arr[i].substring(1);
-                        date= Date.from(LocalDateTime.parse(dateStr,requestDateDay).toInstant(ZoneOffset.of("+8")));
+                        date= Date.from(LocalDateTime.parse(dateStr+"000101",requestDateDay).toInstant(ZoneOffset.of("+8")));
                     }
 
                     //2.1.3、根据条件格式化日期并组装条件
@@ -143,5 +144,9 @@ public class CostModeHandler extends ModeHandler{
                 }
             }
         }
+    }
+
+    public static void main(String[] args) {
+        DateZoneUtil.stringToDate("20190507000101","yyyyMMddHHmmss");
     }
 }
