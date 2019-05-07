@@ -2,7 +2,9 @@ package com.bcd.wx.data;
 
 public enum Mode {
 
-    ACCOUNT_MODE("1","记账");
+    ACCOUNT_MODE("1","记账"),
+
+    COST_MODE("2","花费");
 
     private String id;
     private String name;
