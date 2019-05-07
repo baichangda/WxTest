@@ -77,7 +77,7 @@ public class CostModeHandler extends ModeHandler{
                         date=new Date();
                     }else{
                         String dateStr=arr[i].substring(1);
-                        date= Date.from(LocalDateTime.parse(dateStr,requestDateDay).toInstant(ZoneOffset.of("Asia/Shanghai")));
+                        date= Date.from(LocalDateTime.parse(dateStr,requestDateDay).toInstant(ZoneOffset.of("+8")));
                     }
 
                     //2.1.3、根据条件格式化日期并组装条件
