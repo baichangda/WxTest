@@ -2,7 +2,6 @@ package com.bcd.wx.handler;
 
 import com.bcd.base.condition.Condition;
 import com.bcd.base.condition.impl.DateCondition;
-import com.bcd.base.util.DateUtil;
 import com.bcd.base.util.DateZoneUtil;
 import com.bcd.base.util.ExceptionUtil;
 import com.bcd.wx.bean.CostBean;
@@ -14,7 +13,9 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class CostModeHandler extends ModeHandler{
     CostService costService;
 
 
-    public final DateTimeFormatter requestDateMinute=DateTimeFormatter.ofPattern("yyyyMMdd").withZone(ZoneId.of("Asia/Shanghai"));
+    public final DateTimeFormatter requestDateDay =DateTimeFormatter.ofPattern("yyyyMMdd").withZone(ZoneId.of("Asia/Shanghai"));
 
     public final DateTimeFormatter requestDateSecond=DateTimeFormatter.ofPattern("yyyyMMddHHmmss").withZone(ZoneId.of("Asia/Shanghai"));
 
@@ -76,7 +77,7 @@ public class CostModeHandler extends ModeHandler{
                         date=new Date();
                     }else{
                         String dateStr=arr[i].substring(1);
-                        date= Date.from(Instant.from(requestDateMinute.parse(dateStr)));
+                        date= Date.from(LocalDateTime.parse(dateStr,requestDateDay).toInstant(ZoneOffset.of("Asia/Shanghai")));
                     }
 
                     //2.1.3、根据条件格式化日期并组装条件
@@ -120,7 +121,7 @@ public class CostModeHandler extends ModeHandler{
                     if(arr.length>=3){
                         switch (arr[2].length()){
                             case 8:{
-                                costBean.setCreateTime(Date.from(Instant.from(requestDateMinute.parse(arr[2]))));
+                                costBean.setCreateTime(Date.from(Instant.from(requestDateDay.parse(arr[2]))));
                                 break;
                             }
                             case 14:{
