@@ -131,6 +131,8 @@ public class CostModeHandler extends ModeHandler{
                                 return getHelp();
                             }
                         }
+                    }else{
+                        costBean.setCreateTime(new Date());
                     }
                     costService.save(costBean);
                     return "记录成功";
