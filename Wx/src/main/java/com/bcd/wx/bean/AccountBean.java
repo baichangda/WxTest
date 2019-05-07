@@ -4,6 +4,7 @@ import com.bcd.mongodb.bean.SuperBaseBean;
 import com.bcd.mongodb.code.CodeGenerator;
 import com.bcd.mongodb.code.CollectionConfig;
 import com.bcd.mongodb.code.Config;
+import io.swagger.annotations.ApiModelProperty;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
@@ -12,18 +13,23 @@ import java.util.Date;
 @Document(collection = "account")
 public class AccountBean extends SuperBaseBean<String>{
     //微信用户id
+    @ApiModelProperty(value = "微信用户id")
     private String userId;
 
     //借款人
+    @ApiModelProperty(value = "借款人")
     private String borrower;
 
     //借款总金额(正数代表欠款,负数代表还款)
+    @ApiModelProperty(value = "借款总金额(正数代表欠款,负数代表还款)")
     private BigDecimal balance=new BigDecimal(0);
 
     //借款人创建时间
+    @ApiModelProperty(value = "借款人创建时间")
     private Date createTime;
 
     //借款人备注
+    @ApiModelProperty(value = "借款人备注")
     private String remark;
 
     public String getUserId() {

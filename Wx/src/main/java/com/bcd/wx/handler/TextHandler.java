@@ -1,5 +1,6 @@
 package com.bcd.wx.handler;
 
+import com.bcd.base.util.ExceptionUtil;
 import com.bcd.wx.data.Message;
 import com.bcd.wx.data.Mode;
 import com.bcd.wx.data.MsgType;
@@ -71,10 +72,17 @@ public class TextHandler extends Handler<RequestTextMessage> {
                 if (modeHandler == null) {
                     return new ResponseTextMessage(wxName, fromUserName, "未知错误[服务已下线]");
                 } else {
-                    String msg = modeHandler.handle(fromUserName, content);
-                    if(msg==null){
-                        msg="服务暂未开通,敬请期待";
+                    String msg;
+                    try {
+                        msg = modeHandler.handle(fromUserName, content);
+                        if(msg==null){
+                            msg="服务暂未开通,敬请期待";
+                        }
+                    }catch (Exception ex){
+                        ExceptionUtil.printException(ex);
+                        msg="未知错误";
                     }
+
                     return new ResponseTextMessage(wxName, fromUserName, msg);
                 }
             }

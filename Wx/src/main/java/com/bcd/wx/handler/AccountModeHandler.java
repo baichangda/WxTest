@@ -29,6 +29,8 @@ public class AccountModeHandler extends ModeHandler{
     @Autowired
     AccountDetailService accountDetailService;
 
+
+
     public AccountModeHandler() {
         super(Mode.ACCOUNT_MODE);
     }
@@ -75,8 +77,7 @@ public class AccountModeHandler extends ModeHandler{
                 if(accountDetailBeanList.size()==0){
                     return "查询不到信息";
                 }else{
-                    DateTimeFormatter formatter=DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.of("Asia/Shanghai"));
-                    return accountDetailBeanList.stream().map(e->e.getBorrower()+" "+e.getMoney()+" "+formatter.format(e.getTime().toInstant())).reduce((e1,e2)->e1+"\n"+e2).get();
+                    return accountDetailBeanList.stream().map(e->e.getBorrower()+" "+e.getMoney()+" "+CommonConst.RESPONSE_DATE_FORMAT.format(e.getTime().toInstant())).reduce((e1,e2)->e1+"\n"+e2).get();
                 }
             }
             case "3":{

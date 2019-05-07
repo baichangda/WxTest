@@ -1,6 +1,7 @@
 package com.bcd.wx.bean;
 
 import com.bcd.mongodb.bean.SuperBaseBean;
+import io.swagger.annotations.ApiModelProperty;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
@@ -9,21 +10,27 @@ import java.util.Date;
 @Document(collection = "accountDetail")
 public class AccountDetailBean extends SuperBaseBean<String>{
     //关联的借款信息
+    @ApiModelProperty(value = "关联的借款信息")
     private String accountId;
 
     //微信用户id
+    @ApiModelProperty(value = "微信用户id")
     private String userId;
 
     //借款人
+    @ApiModelProperty(value = "借款人")
     private String borrower;
 
     //借款金额(正数代表借款,负数代表还款)
+    @ApiModelProperty(value = "借款金额(正数代表借款,负数代表还款)")
     private BigDecimal money;
 
     //借款时间
+    @ApiModelProperty(value = "借款时间")
     private Date time;
 
     //借款备注
+    @ApiModelProperty(value = "借款备注")
     private String remark;
 
     public String getAccountId() {
