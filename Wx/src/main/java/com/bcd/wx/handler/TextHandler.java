@@ -69,9 +69,12 @@ public class TextHandler extends Handler<RequestTextMessage> {
                 ModeHandler modeHandler = CommonConst.MODE_TO_HANDLER.get(expireMode.mode);
                 //7.2.2、调用handler处理对应逻辑
                 if (modeHandler == null) {
-                    return new ResponseTextMessage(wxName, fromUserName, "错误");
+                    return new ResponseTextMessage(wxName, fromUserName, "未知错误[服务已下线]");
                 } else {
                     String msg = modeHandler.handle(fromUserName, content);
+                    if(msg==null){
+                        msg="服务暂未开通,敬请期待";
+                    }
                     return new ResponseTextMessage(wxName, fromUserName, msg);
                 }
             }
