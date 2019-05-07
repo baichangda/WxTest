@@ -41,13 +41,13 @@ public class CostModeHandler extends ModeHandler{
         StringBuilder msg=new StringBuilder();
         msg.append("示例命令如下:\n");
         msg.append("--添加花费,格式:\n");
-        msg.append("100 xxx瓷砖花费 20190507(或20190507111111,或时间可以不传,默认当前时间)\n");
+        msg.append("100 xxx瓷砖花费 20190507(可不传)\n");
         msg.append("--查询花费,格式:\n");
-        msg.append("<20190507(查询包括20190507日期之前的所有花费及汇总,可组合使用)");
-        msg.append(">20190507(查询包括20190507日期之前的所有花费及汇总,可组合使用)");
-        msg.append("=20190507(查询20190507日期的所有花费及汇总)");
-        msg.append("=(查询当天的所有花费及汇总)");
-        msg.append("<(查询包括当天之前的所有花费及汇总,可组合使用)");
+        msg.append("<20190507(查询包括日期之前)");
+        msg.append(">20190507(查询包括日期之后)");
+        msg.append("=20190507(查询日期当天)");
+        msg.append("=(查询当天)");
+        msg.append("<(查询当天之前)");
         return msg.toString();
     }
 
@@ -71,13 +71,13 @@ public class CostModeHandler extends ModeHandler{
                         return getHelp();
                     }
                     //2.1.2、获取日期
-                    String dateStr;
+                    Date date;
                     if(arr[i].length()==1){
-                        dateStr =DateZoneUtil.getDateNum(new Date(), ChronoUnit.DAYS).toString();
+                        date=new Date();
                     }else{
-                        dateStr=arr[i].substring(1);
+                        String dateStr=arr[i].substring(1);
+                        date= Date.from(Instant.from(requestDateMinute.parse(dateStr)));
                     }
-                    Date date= Date.from(Instant.from(requestDateMinute.parse(dateStr)));
 
                     //2.1.3、根据条件格式化日期并组装条件
                     if(isLt){
@@ -133,7 +133,7 @@ public class CostModeHandler extends ModeHandler{
                         }
                     }
                     costService.save(costBean);
-                    return "记录成功,"+arr[0];
+                    return "记录成功";
                 }catch (NumberFormatException ex){
                     ExceptionUtil.printException(ex);
                     return getHelp();
