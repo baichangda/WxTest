@@ -11,8 +11,6 @@ dependencies {
     //lettuce异步客户端(默认使用lettuce,必须手动引用apache commons-pool2)
     compile("org.springframework.boot:spring-boot-starter-data-redis:${springBootVersion}")
     compile("org.apache.commons:commons-pool2:${commonsPool2}")
-    //jedis同步客户端,可以不进行引用(此jar默认引入了apache commons-pool2)
-//    compile("redis.clients:jedis:${jedisVersion}")
 
     //poi 集成
     compile("org.apache.poi:poi:${poiVersion}")
@@ -39,12 +37,11 @@ dependencies {
 }
 buildscript {
     ext {
-        jacksonVersion = '+'
-        poiVersion = '+'
-        commonsBeanutilsVersion ='+'
-        commonsLangVersion='+'
-        swaggerVersion='+'
-        commonsPool2='+'
-        jedisVersion='+'
+        jacksonVersion = '2.9.8'
+        poiVersion = '4.1.0'
+        commonsBeanutilsVersion ='1.9.3'
+        commonsLangVersion='3.9'
+        swaggerVersion='2.9.2'
+        commonsPool2='2.6.2'
     }
 }

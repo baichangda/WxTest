@@ -28,31 +28,9 @@ allprojects{
     dependencies{
         //springboot websocket支持
         compile("org.springframework.boot:spring-boot-starter-websocket:${springBootVersion}")
-        //springboot rabbitmq支持
-        compile("org.springframework.boot:spring-boot-starter-amqp:${springBootVersion}")
-        //springboot kafka支持
-        compile("org.springframework.kafka:spring-kafka:${kafkaVersion}")
         //shiro权限框架集成
         compile("org.apache.shiro:shiro-spring:${shiroVersion}")
         compile("org.apache.shiro:shiro-ehcache:${shiroVersion}")
-        //rocketmq集成
-        compile("com.aliyun.openservices:ons-client:1.7.0.Final")
-        //阿里云 tablestore集成
-        compile("com.aliyun.openservices:tablestore:${tablestoreVersion}") {
-            //解决阿里云传递性依赖
-            exclude group: 'org.apache.logging.log4j', module: 'slf4j-api'
-            exclude group: 'org.apache.logging.log4j', module: 'log4j-core'
-            exclude group: 'org.apache.logging.log4j', module: 'log4j-slf4j-impl'
-        }
-        //阿里云mns集成
-        compile("com.aliyun.mns:aliyun-sdk-mns:${mnsVersion}")
-        //阿里云sms集成
-        compile ("com.aliyun:aliyun-java-sdk-dysmsapi:${smsVersion}")
-        compile ("com.aliyun:aliyun-java-sdk-core:${aliyunSdkCoreVersion}")
-        //阿里云视频直播live集成
-        compile ("com.aliyun:aliyun-java-sdk-live:${liveVersion}")
-        //阿里云oss对象存储集成
-        compile ("com.aliyun.oss:aliyun-sdk-oss:${ossVersion}")
     }
 
     compileJava{
@@ -129,16 +107,8 @@ bootRun {
 
 buildscript {
     ext {
-        springBootVersion = '+'
-        shiroVersion='+'
-        kafkaVersion='+'
-        tablestoreVersion='+'
-        mnsVersion='+'
-        smsVersion='+'
-        liveVersion='+'
-        ossVersion='+'
-        aliyunSdkCoreVersion='+'
-        flywayVersion = '+'
+        springBootVersion = '2.1.4.RELEASE'
+        shiroVersion='1.4.1'
         mavenRepoUrl='https://maven.aliyun.com/repository/central'
 
     }
