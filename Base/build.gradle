@@ -1,16 +1,17 @@
 dependencies {
     //springboot支持
     compile("org.springframework.boot:spring-boot-starter:${springBootVersion}")
-    //springboot web支持
-    compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
     //springboot aop支持
     compile("org.springframework.boot:spring-boot-starter-aop:${springBootVersion}")
+    //springboot web支持
+    compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
     //springboot test支持
     compile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
-    //springboot redis支持
-    //lettuce异步客户端(默认使用lettuce,必须手动引用apache commons-pool2)
-    compile("org.springframework.boot:spring-boot-starter-data-redis:${springBootVersion}")
-    compile("org.apache.commons:commons-pool2:${commonsPool2}")
+    //springboot websocket支持
+    compile("org.springframework.boot:spring-boot-starter-websocket:${springBootVersion}")
+
+    //springboot validation支持
+    compile("org.springframework.boot:spring-boot-starter-validation:${springBootVersion}")
 
     //poi 集成
     compile("org.apache.poi:poi:${poiVersion}")
@@ -25,23 +26,28 @@ dependencies {
     //apache commons beanUtils
     compile("commons-beanutils:commons-beanutils:${commonsBeanutilsVersion}")
 
+    //apache commons codec
+    compile("commons-codec:commons-codec:${commonsCodecVersion}")
+
+    //apache commons io
+    compile("commons-io:commons-io:${commonsIoVersion}")
+
     //apache commons lang3
     compile("org.apache.commons:commons-lang3:${commonsLangVersion}")
 
     //swagger集成
     compile "io.springfox:springfox-swagger2:${swaggerVersion}"
     compile "io.springfox:springfox-swagger-ui:${swaggerVersion}"
-
-
-
 }
 buildscript {
     ext {
-        jacksonVersion = '2.9.8'
-        poiVersion = '4.1.0'
-        commonsBeanutilsVersion ='1.9.3'
+        jacksonVersion = '2.10.3'
+        poiVersion = '4.1.2'
+        commonsBeanutilsVersion ='1.9.4'
+        commonsCodecVersion='1.14'
+        commonsIoVersion='2.6'
         commonsLangVersion='3.9'
         swaggerVersion='2.9.2'
-        commonsPool2='2.6.2'
+        commonsPool2='2.8.0'
     }
 }

@@ -2,21 +2,26 @@ package com.bcd.base.util;
 
 import com.bcd.base.define.CommonConst;
 import com.bcd.base.exception.BaseRuntimeException;
-import com.bcd.base.json.jackson.filter.EmptyJacksonFilter;
 import com.bcd.base.json.SimpleFilterBean;
+import com.bcd.base.json.jackson.filter.EmptyJacksonFilter;
 import com.bcd.base.json.jackson.filter.SimpleJacksonFilter;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.DefaultSerializerProvider;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -27,13 +32,33 @@ import java.util.stream.Stream;
 @SuppressWarnings("unchecked")
 public class JsonUtil {
     //此空过滤器必须定义在全局 GLOBAL_OBJECT_MAPPER 之前
-    private final static FilterProvider EMPTY=new SimpleFilterProvider().setDefaultFilter(new EmptyJacksonFilter());
-    public final static ObjectMapper GLOBAL_OBJECT_MAPPER= withConfig(new ObjectMapper());
+    private final static FilterProvider EMPTY = new SimpleFilterProvider().setDefaultFilter(new EmptyJacksonFilter());
+    public final static ObjectMapper GLOBAL_OBJECT_MAPPER = withConfig(new ObjectMapper());
+
+
+    public static JavaType getJavaType(Type type) {
+        //1、判断是否带有泛型
+        if (type instanceof ParameterizedType) {
+            Type[] actualTypeArguments = ((ParameterizedType) type).getActualTypeArguments();
+            //1.1、获取泛型类型
+            Class rawClass = (Class) ((ParameterizedType) type).getRawType();
+            JavaType[] javaTypes = new JavaType[actualTypeArguments.length];
+            for (int i = 0; i < actualTypeArguments.length; i++) {
+                //1.2、泛型也可能带有泛型，递归获取
+                javaTypes[i] = getJavaType(actualTypeArguments[i]);
+            }
+            return TypeFactory.defaultInstance().constructParametricType(rawClass, javaTypes);
+        } else {
+            //2、简单类型直接用该类构建JavaType
+            Class cla = (Class) type;
+            return TypeFactory.defaultInstance().constructParametricType(cla, new JavaType[0]);
+        }
+    }
 
 
     /**
      * 1、为ObjectMapper重新设置MapSerializer,使其能使用PropertyFilter过滤属性,并为所有的Map添加过滤器
-     *    如果设置了map过滤,则必须为objectMapper设置默认过滤器(默认设置空的过滤器)
+     * 如果设置了map过滤,则必须为objectMapper设置默认过滤器(默认设置空的过滤器)
      * 2、设置所有Number属性的 输出为字符串(Long类型数字传入前端会进行四舍五入导致精度丢失,为了避免这种情况,所有的数字全部采用String格式化)
      * 3、设置忽略null属性输出
      * 4、设置在解析json字符串为实体类时候,忽略多余的属性
@@ -42,13 +67,13 @@ public class JsonUtil {
      * @param t
      * @return
      */
-    public static <T extends ObjectMapper>T withConfig(T t){
+    public static <T extends ObjectMapper> T withConfig(T t) {
         try {
             //1、设置map过滤器
-            SerializerProvider provider=new DefaultSerializerProvider.Impl().createInstance(t.getSerializationConfig(),t.getSerializerFactory());
+            SerializerProvider provider = new DefaultSerializerProvider.Impl().createInstance(t.getSerializationConfig(), t.getSerializerFactory());
             JsonSerializer mapSerializer = provider.findValueSerializer(Map.class);
-            SimpleModule simpleModule=new SimpleModule();
-            simpleModule.addSerializer(Map.class,mapSerializer.withFilterId("bcd"));
+            SimpleModule simpleModule = new SimpleModule();
+            simpleModule.addSerializer(Map.class, mapSerializer.withFilterId("bcd"));
             //2、设置所有Number属性的 输出为字符串
             simpleModule.addSerializer(Number.class, ToStringSerializer.instance);
             t.registerModule(simpleModule);
@@ -56,7 +81,9 @@ public class JsonUtil {
             //3、设置忽略null属性输出
             t.setSerializationInclusion(JsonInclude.Include.NON_NULL);
             //4、设置在解析json字符串为实体类时候,忽略多余的属性
-            t.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
+            t.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            //5、设置在序列化时候遇到空属性对象时候,不抛出异常
+            t.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
             return t;
         } catch (JsonMappingException e) {
             throw BaseRuntimeException.getException(e);
@@ -65,23 +92,25 @@ public class JsonUtil {
 
     /**
      * 此方法会调用 withConfig 改变objectMapper
+     *
      * @param object
      * @param filters
      * @return
      */
-    public static String toJson(Object object,SimpleFilterBean ... filters){
-        return toJson(GLOBAL_OBJECT_MAPPER,object,filters);
+    public static String toJson(Object object, SimpleFilterBean... filters) {
+        return toJson(GLOBAL_OBJECT_MAPPER, object, filters);
     }
 
 
     /**
      * 此方法会调用 withConfig 改变objectMapper
+     *
      * @param object
      * @param filters
      * @return
      */
-    public static String toJson(ObjectMapper objectMapper,Object object,SimpleFilterBean ... filters){
-        if(objectMapper!=GLOBAL_OBJECT_MAPPER){
+    public static String toJson(ObjectMapper objectMapper, Object object, SimpleFilterBean... filters) {
+        if (objectMapper != GLOBAL_OBJECT_MAPPER) {
             withConfig(objectMapper);
         }
         objectMapper.setFilterProvider(new SimpleFilterProvider().setDefaultFilter(new SimpleJacksonFilter(filters)));
@@ -100,7 +129,7 @@ public class JsonUtil {
      * @return
      */
     public static SimpleFilterBean[] combineFilters(SimpleFilterBean[]... filterss) {
-        return combineFilters(Arrays.stream(filterss).flatMap(e->e==null?Stream.empty():Arrays.stream(e)).toArray(SimpleFilterBean[]::new));
+        return combineFilters(Arrays.stream(filterss).flatMap(e -> e == null ? Stream.empty() : Arrays.stream(e)).toArray(SimpleFilterBean[]::new));
     }
 
     /**
@@ -111,10 +140,10 @@ public class JsonUtil {
      * @return
      */
     public static SimpleFilterBean[] combineFilters(SimpleFilterBean... filters) {
-        if(filters==null||filters.length==0){
+        if (filters == null || filters.length == 0) {
             return new SimpleFilterBean[0];
         }
-        return Arrays.stream(filters).filter(Objects::nonNull).reduce(new HashMap<String,SimpleFilterBean>(),(res,filter)->{
+        return Arrays.stream(filters).filter(Objects::nonNull).reduce(new HashMap<String, SimpleFilterBean>(), (res, filter) -> {
             String key = filter.getClazz().getName();
             SimpleFilterBean val = res.get(key);
             if (val == null) {
@@ -123,7 +152,7 @@ public class JsonUtil {
                 val.getExcludes().addAll(filter.getExcludes());
             }
             return res;
-        },(res1,res2)->{
+        }, (res1, res2) -> {
             res1.putAll(res2);
             return res1;
         }).values().stream().toArray(SimpleFilterBean[]::new);
@@ -218,7 +247,7 @@ public class JsonUtil {
         }
 
         //12、返回结果集
-        if(filterMap.size()==0){
+        if (filterMap.size() == 0) {
             return new SimpleFilterBean[0];
         }
         return filterMap.values().stream().toArray(SimpleFilterBean[]::new);
@@ -227,13 +256,10 @@ public class JsonUtil {
     /**
      * 支持多个过滤器类型
      *
-     * @param paramArr
-     * [
-     *    [UserBean.class,["id","name",......]],
-     *    [RoleBean.class,["id","name",......]],
-     * ]
-     *
-     *
+     * @param paramArr [
+     *                 [UserBean.class,["id","name",......]],
+     *                 [RoleBean.class,["id","name",......]],
+     *                 ]
      * @return
      */
     public static SimpleFilterBean[] parseJsonFiltersByParam(Object[]... paramArr) {
@@ -246,13 +272,13 @@ public class JsonUtil {
             Class clazz = (Class) paramArr[i][0];
             String[] filterStrArr = (String[]) paramArr[i][1];
             SimpleFilterBean[] curSimpleFilterBean = parseJsonFiltersByParam(clazz, filterStrArr);
-            if (curSimpleFilterBean == null||curSimpleFilterBean.length==0) {
+            if (curSimpleFilterBean == null || curSimpleFilterBean.length == 0) {
                 continue;
             }
             SimpleFilterBeanList.addAll(Arrays.asList(curSimpleFilterBean));
         }
         //2、合并多次调用的返回结果,将相同类的filter整合在一起
-        if(SimpleFilterBeanList.isEmpty()){
+        if (SimpleFilterBeanList.isEmpty()) {
             return new SimpleFilterBean[0];
         }
         Map<String, SimpleFilterBean> filterMap = SimpleFilterBeanList.stream().collect(Collectors.toMap(
@@ -264,10 +290,77 @@ public class JsonUtil {
                 }
         ));
         //3、返回结果集
-        if(filterMap.size()==0){
+        if (filterMap.size() == 0) {
             return new SimpleFilterBean[0];
         }
         return filterMap.values().stream().toArray(SimpleFilterBean[]::new);
     }
 
+
+    public static void main(String[] args) throws IOException {
+        int i=1;
+        System.out.println((++i)+(++i));
+        TestBean t1=new TestBean();
+        t1.setId(1);
+        t1.setName("t1");
+        TestBean t2=new TestBean();
+        t2.setId(2);
+        t2.setName("t2");
+        TestBean t3=new TestBean();
+        t2.setId(3);
+        t2.setName("t3");
+        t1.setDataList(Arrays.asList(t2,t3));
+        ObjectMapper objectMapper= JsonUtil.withConfig(new ObjectMapper());
+        SimpleModule simpleModule=new SimpleModule();
+        simpleModule.addDeserializer(TestBean.class, new StdDeserializer<TestBean>(TestBean.class) {
+            @Override
+            public TestBean deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+                String field=p.nextFieldName();
+                JsonToken token= p.nextToken();
+                return null;
+            }
+        });
+        objectMapper.registerModule(simpleModule);
+        TestBean res= objectMapper.readValue(JsonUtil.toJson(t1), TestBean.class);
+    }
+
+}
+
+class TestBean{
+    private Integer id;
+    private String name;
+    private List<TestBean> dataList;
+    private String dataJson;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<TestBean> getDataList() {
+        return dataList;
+    }
+
+    public void setDataList(List<TestBean> dataList) {
+        this.dataList = dataList;
+    }
+
+    public String getDataJson() {
+        return dataJson;
+    }
+
+    public void setDataJson(String dataJson) {
+        this.dataJson = dataJson;
+    }
 }

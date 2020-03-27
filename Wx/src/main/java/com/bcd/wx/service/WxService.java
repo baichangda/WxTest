@@ -67,7 +67,7 @@ public class WxService {
     public String handle(String data) {
         logger.debug("\ndata: "+data);
         try {
-            JsonNode jsonNode =XmlUtil.WX_XML_MAPPER.readTree(data);
+            JsonNode jsonNode =XmlUtil.GLOBAL_XML_MAPPER.readTree(data);
             String msgType= jsonNode.get("MsgType").asText();
             Handler handler= Handler.MSG_TYPE_TO_HANDLER.get(msgType);
             Message res;
@@ -75,13 +75,13 @@ public class WxService {
                 String toUserName=jsonNode.get("FromUserName").asText();
                 res=new ResponseTextMessage(wxName,toUserName,"暂不支持");
             }else{
-                Object message= jsonNode.traverse(XmlUtil.WX_XML_MAPPER).readValueAs(handler.getClazz());
+                Object message= jsonNode.traverse(XmlUtil.GLOBAL_XML_MAPPER).readValueAs(handler.getClazz());
                 if(message instanceof JsonNodeDataSupport){
                     ((JsonNodeDataSupport) message).setData(jsonNode);
                 }
                 res= handler.handle((Message)message);
             }
-            String resStr=XmlUtil.WX_XML_MAPPER.writeValueAsString(res);
+            String resStr=XmlUtil.GLOBAL_XML_MAPPER.writeValueAsString(res);
             logger.debug("\nHandler Res: "+resStr);
 
             return resStr;
@@ -95,7 +95,7 @@ public class WxService {
         Map<String,String> dataMap=new HashMap<>();
         dataMap.put("A","a");
         dataMap.put("B","b");
-        String res=XmlUtil.WX_XML_MAPPER.writeValueAsString(dataMap);
+        String res=XmlUtil.GLOBAL_XML_MAPPER.writeValueAsString(dataMap);
 
         logger.info("\nRes: "+res);
     }

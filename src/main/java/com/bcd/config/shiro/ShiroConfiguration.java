@@ -6,6 +6,7 @@ import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.mgt.*;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.session.mgt.SessionManager;
+import org.apache.shiro.session.mgt.eis.MemorySessionDAO;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
@@ -15,7 +16,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
@@ -81,14 +81,13 @@ public class ShiroConfiguration{
 
     /**
      * 会话管理器
-     * @param redisTemplate
      * @return
      */
     @Bean
-    public SessionManager sessionManager(@Qualifier(value = "string_serializable_redisTemplate") RedisTemplate redisTemplate){
+    public SessionManager sessionManager(){
 //        MyWebHeaderSessionManager sessionManager=new MyWebHeaderSessionManager();
         DefaultWebSessionManager sessionManager=new DefaultWebSessionManager();
-        sessionManager.setSessionDAO(new MySessionRedisDAO(redisTemplate));
+        sessionManager.setSessionDAO(new MemorySessionDAO());
         sessionManager.setGlobalSessionTimeout(-1000L);
         return sessionManager;
     }

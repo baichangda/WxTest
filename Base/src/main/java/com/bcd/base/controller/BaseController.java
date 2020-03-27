@@ -1,6 +1,5 @@
 package com.bcd.base.controller;
 
-import com.bcd.base.cache.anno.MyCacheClass;
 import com.bcd.base.exception.BaseRuntimeException;
 import com.bcd.base.util.DateZoneUtil;
 import com.bcd.base.util.FileUtil;
@@ -18,7 +17,6 @@ import java.util.Date;
 /**
  * Created by Administrator on 2017/4/11.
  */
-@MyCacheClass
 public class BaseController {
 
     public final static String DEFAULT_RESPONSE_ENCODING="UTF-8";
