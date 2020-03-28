@@ -2,7 +2,6 @@ package com.bcd.config.shiro;
 
 import com.bcd.base.config.shiro.ShiroMessageDefine;
 import com.bcd.config.exception.handler.ExceptionResponseHandler;
-import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
@@ -61,7 +60,7 @@ public class MyAuthenticationFilter extends BasicHttpAuthenticationFilter {
             loggedIn = executeLogin(request, response);
         }
         if (!loggedIn) {
-                handler.handle(WebUtils.toHttp(response), ShiroMessageDefine.ERROR_SHIRO_UNAUTHENTICATED.toJsonMessage());
+            handler.handle(WebUtils.toHttp(response), ShiroMessageDefine.ERROR_SHIRO_UNAUTHENTICATED.toJsonMessage());
         }
         return loggedIn;
     }

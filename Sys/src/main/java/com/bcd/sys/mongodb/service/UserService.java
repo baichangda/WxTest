@@ -7,7 +7,7 @@ import com.bcd.sys.define.CommonConst;
 import com.bcd.sys.define.MessageDefine;
 import com.bcd.sys.keys.KeysConst;
 import com.bcd.sys.mongodb.bean.UserBean;
-import com.bcd.sys.mongodb.shiro.MyShiroRealm;
+import com.bcd.sys.shiro.MyShiroRealm;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;

@@ -1,4 +1,4 @@
-package com.bcd.sys.mongodb.shiro;
+package com.bcd.sys.shiro;
 
 import com.bcd.base.condition.Condition;
 import com.bcd.base.condition.impl.StringCondition;

@@ -7,6 +7,7 @@ import org.apache.shiro.subject.Subject;
 
 import java.lang.annotation.Annotation;
 import java.util.Set;
+
 @SuppressWarnings("unchecked")
 public class UrlPermissionAnnotationHandler extends AuthorizingAnnotationHandler {
 

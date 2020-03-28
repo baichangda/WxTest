@@ -1,9 +1,9 @@
 package com.bcd.config.shiro;
 
-import com.bcd.config.exception.handler.ExceptionResponseHandler;
 import com.bcd.base.config.shiro.AuthorizationHandler;
+import com.bcd.config.exception.handler.ExceptionResponseHandler;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
-import org.apache.shiro.mgt.*;
+import org.apache.shiro.mgt.RememberMeManager;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.session.mgt.eis.MemorySessionDAO;
@@ -56,7 +56,6 @@ public class ShiroConfiguration{
         ehcacheManager.setCacheManagerConfigFile("classpath:com/bcd/config/ehcache-shiro.xml");
         return ehcacheManager;
     }
-
 
     /**
      * 安全管理器
@@ -111,7 +110,7 @@ public class ShiroConfiguration{
      * @return
      */
     @Bean(name = "shiroFilter")
-    public ShiroFilterFactoryBean shiroFilterFactoryBean(DefaultWebSecurityManager securityManager, ExceptionResponseHandler handler,AuthorizationHandler authorizationHandler){
+    public ShiroFilterFactoryBean shiroFilterFactoryBean(DefaultWebSecurityManager securityManager, ExceptionResponseHandler handler, AuthorizationHandler authorizationHandler){
         ShiroFilterFactoryBean factoryBean = new MyShiroFilterFactoryBean();
         Map<String,Filter> filterMap=new HashMap<>();
         filterMap.put("authc",new MyAuthenticationFilter(handler));
@@ -142,6 +141,7 @@ public class ShiroConfiguration{
         //user: authc后或者rememberMe的都可以访问
         filterChainMap.put("/api/anonymous/**", "anon");
         filterChainMap.put("/api/sys/user/login", "anon");
+        filterChainMap.put("/api/i18n/changeLocal", "anon");
 //        filterChainMap.put("/api/**/list", "user");
 //        filterChainMap.put("/api/**/page", "user");
         filterChainMap.put("/api/**","authc");

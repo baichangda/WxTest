@@ -1,0 +1,182 @@
+package com.bcd.sys.mongodb.bean;
+
+import com.bcd.base.util.ExceptionUtil;
+import com.bcd.base.util.IPUtil;
+import com.bcd.mongodb.bean.BaseBean;
+import com.bcd.sys.shiro.ShiroUtil;
+import com.bcd.sys.task.Task;
+import com.bcd.sys.task.TaskStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.Date;
+
+/**
+ *  系统任务处理表
+ */
+@Document(collection = "task")
+public class TaskBean extends BaseBean<String> implements Task {
+    @NotBlank(message = "[任务名称]不能为空")
+    @Size(max = 50,message = "[任务名称]长度不能超过50")
+    @ApiModelProperty(value = "任务名称(不能为空,长度不能超过50)")
+    private String name;
+
+    @NotNull(message = "[任务状态]不能为空")
+    @ApiModelProperty(value = "任务状态(1:等待中;2:执行中;3:任务被终止;4:已完成;5:执行失败)(不能为空)")
+    private Integer status;
+
+    @ApiModelProperty(value = "任务类型(1:普通任务;2:文件类型任务)(不能为空)")
+    private Integer type;
+
+    @Size(max = 255,message = "[任务信息]长度不能超过255")
+    @ApiModelProperty(value = "任务信息(失败时记录失败原因)(长度不能超过255)")
+    private String message;
+
+    @NotNull(message = "[任务处理进度]不能为空")
+    @ApiModelProperty(value = "任务处理进度")
+    private Float percent;
+
+    @Size(max = 65535,message = "[失败堆栈信息]长度不能超过65535")
+    @ApiModelProperty(hidden = true,readOnly = true,value = "失败堆栈信息(失败时后台异常堆栈信息)(长度不能超过65535)")
+    @Lazy
+    @JsonIgnore
+    private String stackMessage;
+
+    @ApiModelProperty(value = "任务开始时间")
+    private Date startTime;
+
+    @ApiModelProperty(value = "任务完成时间")
+    private Date finishTime;
+
+    @Size(max = 100,message = "[文件路径]长度不能超过100")
+    @ApiModelProperty(value = "文件路径(如果是生成文件的任务,存储的是文件路径;可以存储多个,以;分割)(长度不能超过100)")
+    private String filePaths;
+
+    public TaskBean(String name) {
+        this.name=name;
+        this.percent=0F;
+    }
+
+    public TaskBean() {
+
+    }
+
+    public void setName(String name){
+        this.name=name;
+    }
+
+    public String getName(){
+        return this.name;
+    }
+
+    public void setStatus(Integer status){
+        this.status=status;
+    }
+
+    public Integer getStatus(){
+        return this.status;
+    }
+
+    public void setType(Integer type){
+        this.type=type;
+    }
+
+    public Integer getType(){
+        return this.type;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void setStartTime(Date startTime){
+        this.startTime=startTime;
+    }
+
+    public Date getStartTime(){
+        return this.startTime;
+    }
+
+    public void setFinishTime(Date finishTime){
+        this.finishTime=finishTime;
+    }
+
+    public Date getFinishTime(){
+        return this.finishTime;
+    }
+
+
+    public void setFilePaths(String filePaths){
+        this.filePaths=filePaths;
+    }
+
+    public String getFilePaths(){
+        return this.filePaths;
+    }
+
+    public String getStackMessage() {
+        return stackMessage;
+    }
+
+    public void setStackMessage(String stackMessage) {
+        this.stackMessage = stackMessage;
+    }
+
+    public Float getPercent() {
+        return percent;
+    }
+
+    public void setPercent(Float percent) {
+        this.percent = percent;
+    }
+
+    @Override
+    public void onCreate() {
+        createTime=new Date();
+        status= TaskStatus.WAITING.getStatus();
+        UserBean userBean= ShiroUtil.getCurrentUser();
+        if(userBean!=null) {
+            createUserId = userBean.getId();
+            createUserName = userBean.getRealName();
+        }
+        createIp= IPUtil.getIpAddress();
+    }
+
+    @Override
+    public void onStart() {
+        startTime=new Date();
+        status= TaskStatus.EXECUTING.getStatus();
+    }
+
+    @Override
+    public void onStop() {
+        finishTime=new Date();
+        status= TaskStatus.STOPPED.getStatus();
+    }
+
+    @Override
+    public void onSucceed() {
+        finishTime=new Date();
+        percent=100F;
+        status= TaskStatus.SUCCEED.getStatus();
+    }
+
+    @Override
+    public void onFailed(Exception ex) {
+        finishTime=new Date();
+        status= TaskStatus.FAILED.getStatus();
+        Throwable realException= ExceptionUtil.parseRealException(ex);
+        message= ExceptionUtil.getMessage(realException);
+        stackMessage= ExceptionUtil.getStackTraceMessage(realException);
+    }
+
+}
