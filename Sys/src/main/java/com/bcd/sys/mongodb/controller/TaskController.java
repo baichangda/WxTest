@@ -45,7 +45,6 @@ public class TaskController extends BaseController {
     @ApiOperation(value="查询系统任务列表",notes = "查询系统任务列表")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "id", value = "主键", dataType = "String"),
-        @ApiImplicitParam(name = "orgCode", value = "关联机构编码", dataType = "String"),
         @ApiImplicitParam(name = "name", value = "任务名称", dataType = "String"),
         @ApiImplicitParam(name = "status", value = "任务状态(1:等待中;2:执行中;3:任务被终止;4:已完成;5:执行失败)", dataType = "String"),
         @ApiImplicitParam(name = "type", value = "任务类型(1:普通任务;2:文件类型任务)", dataType = "String"),
@@ -59,7 +58,6 @@ public class TaskController extends BaseController {
     @ApiResponse(code = 200,message = "任务列表")
     public JsonMessage<List<TaskBean>> list(
         @RequestParam(value = "id",required = false) Long id,
-        @RequestParam(value = "orgCode",required = false) String orgCode,
         @RequestParam(value = "name",required = false) String name,
         @RequestParam(value = "status",required = false) Integer status,
         @RequestParam(value = "type",required = false) Byte type,
@@ -73,7 +71,6 @@ public class TaskController extends BaseController {
         UserBean curUser= ShiroUtil.getCurrentUser();
         Condition condition= Condition.and(
             new NumberCondition("id",id, NumberCondition.Handler.EQUAL),
-            new StringCondition("orgCode",orgCode, StringCondition.Handler.LEFT_LIKE),
             new StringCondition("name",name, StringCondition.Handler.ALL_LIKE),
             new NumberCondition("status",status, NumberCondition.Handler.EQUAL),
             new NumberCondition("type",type, NumberCondition.Handler.EQUAL),
@@ -95,7 +92,6 @@ public class TaskController extends BaseController {
     @ApiOperation(value="查询系统任务列表",notes = "查询系统任务分页")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "id", value = "主键", dataType = "String"),
-        @ApiImplicitParam(name = "orgCode", value = "关联机构编码", dataType = "String"),
         @ApiImplicitParam(name = "name", value = "任务名称", dataType = "String"),
         @ApiImplicitParam(name = "status", value = "任务状态(1:等待中;2:执行中;3:任务被终止;4:已完成;5:执行失败)", dataType = "String"),
         @ApiImplicitParam(name = "type", value = "任务类型(1:普通任务;2:文件类型任务)", dataType = "String"),
@@ -111,7 +107,6 @@ public class TaskController extends BaseController {
     @ApiResponse(code = 200,message = "任务分页结果集")
     public JsonMessage<Page<TaskBean>> page(
         @RequestParam(value = "id",required = false) Long id,
-        @RequestParam(value = "orgCode",required = false) String orgCode,
         @RequestParam(value = "name",required = false) String name,
         @RequestParam(value = "status",required = false) Integer status,
         @RequestParam(value = "type",required = false) Byte type,
@@ -127,7 +122,6 @@ public class TaskController extends BaseController {
         UserBean curUser= ShiroUtil.getCurrentUser();
         Condition condition= Condition.and(
             new NumberCondition("id",id, NumberCondition.Handler.EQUAL),
-            new StringCondition("orgCode",orgCode, StringCondition.Handler.LEFT_LIKE),
             new StringCondition("name",name, StringCondition.Handler.ALL_LIKE),
             new NumberCondition("status",status, NumberCondition.Handler.EQUAL),
             new NumberCondition("type",type, NumberCondition.Handler.EQUAL),
