@@ -68,7 +68,6 @@ public class TaskController extends BaseController {
         @RequestParam(value = "finishTimeEnd",required = false) Date finishTimeEnd,
         @RequestParam(value = "filePaths",required = false) String filePaths
     ){
-        UserBean curUser= ShiroUtil.getCurrentUser();
         Condition condition= Condition.and(
             new NumberCondition("id",id, NumberCondition.Handler.EQUAL),
             new StringCondition("name",name, StringCondition.Handler.ALL_LIKE),
@@ -119,7 +118,6 @@ public class TaskController extends BaseController {
         @RequestParam(value = "pageNum",required = false)Integer pageNum,
         @RequestParam(value = "pageSize",required = false) Integer pageSize
     ){
-        UserBean curUser= ShiroUtil.getCurrentUser();
         Condition condition= Condition.and(
             new NumberCondition("id",id, NumberCondition.Handler.EQUAL),
             new StringCondition("name",name, StringCondition.Handler.ALL_LIKE),

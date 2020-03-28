@@ -68,7 +68,6 @@ public class UserController extends BaseController {
         @RequestParam(value = "cardNumber",required = false) String cardNumber,
         @RequestParam(value = "status",required = false) Integer status
     ){
-        UserBean curUser= ShiroUtil.getCurrentUser();
         Condition condition= Condition.and(
             new NumberCondition("id",id, NumberCondition.Handler.EQUAL),
             new StringCondition("orgCode",orgCode, StringCondition.Handler.LEFT_LIKE),
@@ -126,7 +125,6 @@ public class UserController extends BaseController {
         @RequestParam(value = "pageNum",required = false)Integer pageNum,
         @RequestParam(value = "pageSize",required = false) Integer pageSize
     ){
-        UserBean curUser= ShiroUtil.getCurrentUser();
         Condition condition= Condition.and(
             new NumberCondition("id",id, NumberCondition.Handler.EQUAL),
             new StringCondition("orgCode",orgCode, StringCondition.Handler.LEFT_LIKE),
