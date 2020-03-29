@@ -43,14 +43,12 @@ public class WxService {
         if (!wxMpService.checkSignature(timestamp, nonce, signature)) {
             // 消息签名不正确，说明不是公众平台发过来的消息
             response.getWriter().println("非法请求");
-            logger.info("=============1");
             return;
         }
         String echostr = request.getParameter("echostr");
         if (StringUtils.isNotBlank(echostr)) {
             // 说明是一个仅仅用来验证的请求，回显echostr
             response.getWriter().println(echostr);
-            logger.info("=============2");
             return;
         }
 
@@ -62,13 +60,13 @@ public class WxService {
             // 明文传输的消息
             WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(request.getInputStream());
             WxMpXmlOutMessage outMessage = wxMpMessageRouter.route(inMessage);
+            logger.info("out message[{}]",outMessage==null?"null":outMessage.toString());
             if(outMessage == null) {
                 //为null，说明路由配置有问题，需要注意
                 response.getWriter().write("");
             }else {
                 response.getWriter().write(outMessage.toXml());
             }
-            logger.info("=============3[{}]",encryptType);
             return;
         }
 
@@ -84,7 +82,6 @@ public class WxService {
             }else {
                 response.getWriter().write(outMessage.toEncryptedXml(wxMpConfigStorage));
             }
-            logger.info("=============4[{}]",encryptType);
             return;
         }
 
