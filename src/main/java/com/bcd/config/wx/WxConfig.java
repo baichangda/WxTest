@@ -1,5 +1,7 @@
 package com.bcd.config.wx;
 
+import com.bcd.wx.handler.TestHandler;
+import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.mp.api.WxMpMessageHandler;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpMessageRouterRule;
@@ -13,6 +15,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.awt.event.TextEvent;
 import java.util.List;
 
 @Configuration
@@ -40,16 +43,10 @@ public class WxConfig {
     }
 
     @Bean
-    public WxMpMessageRouter wxMpMessageRouter(WxMpService wxMpService){
+    public WxMpMessageRouter wxMpMessageRouter(WxMpService wxMpService, TestHandler testHandler){
         WxMpMessageRouter wxMpMessageRouter=new WxMpMessageRouter(wxMpService);
+        wxMpMessageRouter.rule().msgType(WxConsts.XmlMsgType.TEXT).handler(testHandler).end();
         return wxMpMessageRouter;
-    }
-
-    @Bean
-    public WxMpMessageRouterRule wxMpMessageRouterRule(WxMpMessageRouter wxMpMessageRouter, List<WxMpMessageHandler> handlerList){
-        WxMpMessageRouterRule wxMpMessageRouterRule=new WxMpMessageRouterRule(wxMpMessageRouter);
-        wxMpMessageRouterRule.setHandlers(handlerList);
-        return wxMpMessageRouterRule;
     }
 
     @Bean
