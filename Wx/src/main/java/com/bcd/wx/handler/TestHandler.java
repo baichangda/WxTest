@@ -8,15 +8,19 @@ import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import me.chanjar.weixin.mp.builder.outxml.TextBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 @Component
 public class TestHandler implements WxMpMessageHandler {
+    Logger logger= LoggerFactory.getLogger(TestHandler.class);
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager) throws WxErrorException {
         TextBuilder textBuilder=WxMpXmlOutMessage.TEXT().fromUser(wxMessage.getToUser()).toUser(wxMessage.getFromUser());
+        logger.info("receive[{}]",wxMessage.getContent());
         switch (wxMessage.getMsgType()){
             case WxConsts.XmlMsgType.TEXT:{
                 StringBuilder msg=new StringBuilder("你好,");
