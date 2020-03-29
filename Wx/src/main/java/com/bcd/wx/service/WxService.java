@@ -63,8 +63,9 @@ public class WxService {
             if(outMessage == null) {
                 //为null，说明路由配置有问题，需要注意
                 response.getWriter().write("");
+            }else {
+                response.getWriter().write(outMessage.toXml());
             }
-            response.getWriter().write(outMessage.toXml());
             return;
         }
 
@@ -76,14 +77,13 @@ public class WxService {
             if(outMessage == null) {
                 //为null，说明路由配置有问题，需要注意
                 response.getWriter().write("");
+            }else {
+                response.getWriter().write(outMessage.toEncryptedXml(wxMpConfigStorage));
             }
-            response.getWriter().write(outMessage.toEncryptedXml(wxMpConfigStorage));
             return;
         }
 
         response.getWriter().println("不可识别的加密类型");
-        return;
-
     }
 
 
