@@ -1,128 +1,90 @@
 package com.bcd.wx.service;
 
 import com.bcd.base.util.JsonUtil;
-import com.bcd.base.util.XmlUtil;
-import com.bcd.wx.data.JsonNodeDataSupport;
-import com.bcd.wx.data.Message;
-import com.bcd.wx.data.MsgType;
-import com.bcd.wx.data.response.ResponseTextMessage;
-import com.bcd.wx.handler.Handler;
-import com.fasterxml.jackson.databind.JsonNode;
-import org.apache.commons.codec.digest.DigestUtils;
+import me.chanjar.weixin.mp.api.WxMpMessageRouter;
+import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
+import me.chanjar.weixin.mp.config.WxMpConfigStorage;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
 
 @Service
 public class WxService {
 
-    @Value("${wx.name}")
-    String wxName;
-
-    @Value("${wx.token}")
-    String wxToken;
-
-    @Value("${wx.aesKey}")
-    String wxAesKey;
-
-    @Value("${wx.appId}")
-    String wxAppId;
-
-    @Value("${wx.appSecret}")
-    String wxAppSecret;
 
     @Autowired
-    RestTemplate restTemplate;
+    WxMpService wxMpService;
 
-    //token,过期时间,获取时间
-    Object[] accessTokenData;
+    @Autowired
+    WxMpMessageRouter wxMpMessageRouter;
 
+    @Autowired
+    WxMpConfigStorage wxMpConfigStorage;
 
 
     private final static Logger logger= LoggerFactory.getLogger(WxService.class);
 
-    public String token(String signature, String timestamp, String nonce, String echostr) {
-        logger.debug("\nsignature: "+signature+"\ntimestamp: "+timestamp+"\nnonce: "+nonce+"\nechostr: "+echostr+"\n");
-        List<String> list=new ArrayList<>();
-        list.add(nonce);
-        list.add(timestamp);
-        list.add(wxToken);
-        Collections.sort(list);
-        String res= DigestUtils.sha1Hex(list.stream().reduce((e1, e2)->e1+e2).orElse(""));
-        logger.debug("\nres: "+res);
-        if(res.equals(signature)){
-            return echostr;
-        }else{
-            return null;
-        }
-    }
 
-    public String handle(String data) {
-        logger.debug("\ndata: "+data);
-        try {
-            JsonNode jsonNode =XmlUtil.GLOBAL_XML_MAPPER.readTree(data);
-            String msgType= jsonNode.get("MsgType").asText();
-            Handler handler= Handler.MSG_TYPE_TO_HANDLER.get(msgType);
-            Message res;
-            if(handler==null){
-                String toUserName=jsonNode.get("FromUserName").asText();
-                res=new ResponseTextMessage(wxName,toUserName,"暂不支持");
-            }else{
-                Object message= jsonNode.traverse(XmlUtil.GLOBAL_XML_MAPPER).readValueAs(handler.getClazz());
-                if(message instanceof JsonNodeDataSupport){
-                    ((JsonNodeDataSupport) message).setData(jsonNode);
-                }
-                res= handler.handle((Message)message);
+    public void handle(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("text/html;charset=utf-8");
+        response.setStatus(HttpServletResponse.SC_OK);
+
+        String signature = request.getParameter("signature");
+        String nonce = request.getParameter("nonce");
+        String timestamp = request.getParameter("timestamp");
+        if (!wxMpService.checkSignature(timestamp, nonce, signature)) {
+            // 消息签名不正确，说明不是公众平台发过来的消息
+            response.getWriter().println("非法请求");
+            return;
+        }
+        String echostr = request.getParameter("echostr");
+        if (StringUtils.isNotBlank(echostr)) {
+            // 说明是一个仅仅用来验证的请求，回显echostr
+            response.getWriter().println(echostr);
+            return;
+        }
+
+        String encryptType = StringUtils.isBlank(request.getParameter("encrypt_type")) ?
+                "raw" :
+                request.getParameter("encrypt_type");
+
+        if ("raw".equals(encryptType)) {
+            // 明文传输的消息
+            WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(request.getInputStream());
+            WxMpXmlOutMessage outMessage = wxMpMessageRouter.route(inMessage);
+            if(outMessage == null) {
+                //为null，说明路由配置有问题，需要注意
+                response.getWriter().write("");
             }
-            String resStr=XmlUtil.GLOBAL_XML_MAPPER.writeValueAsString(res);
-            logger.debug("\nHandler Res: "+resStr);
-
-            return resStr;
-        } catch (Exception e) {
-            logger.error("\nHandler Failed",e);
-            return "failed";
+            response.getWriter().write(outMessage.toXml());
+            return;
         }
-    }
 
-    public static void main(String [] args) throws IOException {
-        Map<String,String> dataMap=new HashMap<>();
-        dataMap.put("A","a");
-        dataMap.put("B","b");
-        String res=XmlUtil.GLOBAL_XML_MAPPER.writeValueAsString(dataMap);
-
-        logger.info("\nRes: "+res);
-    }
-
-    public void sendAll(String text) {
-        Map<String,Object> dataMap=new HashMap<>();
-        dataMap.put("filter",new HashMap<String,Object>(){{
-            put("is_to_all",Boolean.TRUE);
-        }});
-        dataMap.put("text",new HashMap<String,String>(){{
-            put("content",text);
-        }});
-        dataMap.put("msgtype", MsgType.text);
-        ResponseEntity<Map> responseEntity= restTemplate.postForEntity("https://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token="+getAccessToken(), dataMap,Map.class);
-        logger.debug("SendAll Res: "+JsonUtil.toJson(responseEntity.getBody()));
-
-    }
-
-    public String getAccessToken(){
-        if(accessTokenData==null||(System.currentTimeMillis()-(long)accessTokenData[2])>(long)accessTokenData[1]){
-            ResponseEntity<JsonNode> responseEntity=restTemplate.getForEntity("https://api.weixin.qq.com/cgi-bin/token?grant_type={1}&appid={2}&secret={3}",JsonNode.class,"client_credential",wxAppId,wxAppSecret);
-            JsonNode jsonNode= responseEntity.getBody();
-            logger.debug("getAccessToken Res: "+JsonUtil.toJson(jsonNode));
-            String accessToken=jsonNode.get("access_token").asText();
-            int expiresIn=jsonNode.get("expires_in").asInt();
-            accessTokenData=new Object[]{accessToken,expiresIn*1000L,System.currentTimeMillis()};
+        if ("aes".equals(encryptType)) {
+            // 是aes加密的消息
+            String msgSignature = request.getParameter("msg_signature");
+            WxMpXmlMessage inMessage = WxMpXmlMessage.fromEncryptedXml(request.getInputStream(), wxMpConfigStorage, timestamp, nonce, msgSignature);
+            WxMpXmlOutMessage outMessage = wxMpMessageRouter.route(inMessage);
+            if(outMessage == null) {
+                //为null，说明路由配置有问题，需要注意
+                response.getWriter().write("");
+            }
+            response.getWriter().write(outMessage.toEncryptedXml(wxMpConfigStorage));
+            return;
         }
-        return accessTokenData[0].toString();
+
+        response.getWriter().println("不可识别的加密类型");
+        return;
+
     }
+
+
 }
