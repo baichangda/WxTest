@@ -19,7 +19,7 @@ public class WxController {
     @Autowired
     WxService wxService;
 
-    @RequestMapping(value = "/handle",method = RequestMethod.GET)
+    @RequestMapping(value = "/handle")
     @ApiOperation(value = "接收微信消息",notes = "接收微信消息")
     @ApiResponse(code = 200,message = "Token",response = String.class)
     public void handle(HttpServletRequest request, HttpServletResponse response) throws IOException {
