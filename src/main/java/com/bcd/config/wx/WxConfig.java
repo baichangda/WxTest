@@ -45,7 +45,7 @@ public class WxConfig {
     @Bean
     public WxMpMessageRouter wxMpMessageRouter(WxMpService wxMpService, TestHandler testHandler){
         WxMpMessageRouter wxMpMessageRouter=new WxMpMessageRouter(wxMpService);
-        wxMpMessageRouter.rule().msgType(WxConsts.XmlMsgType.TEXT).handler(testHandler).end();
+        wxMpMessageRouter.rule().async(false).msgType(WxConsts.XmlMsgType.TEXT).handler(testHandler).end();
         return wxMpMessageRouter;
     }
 
