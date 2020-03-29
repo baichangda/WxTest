@@ -25,7 +25,7 @@ public class WxConfig {
     @Bean
     public WxMpDefaultConfigImpl wxMpDefaultConfig(){
         WxMpDefaultConfigImpl wxMpDefaultConfig=new WxMpDefaultConfigImpl();
-        wxMpDefaultConfig.setAccessToken(wxProperties.token);
+        wxMpDefaultConfig.setToken(wxProperties.token);
         wxMpDefaultConfig.setAesKey(wxProperties.aesKey);
         wxMpDefaultConfig.setAppId(wxProperties.appId);
         wxMpDefaultConfig.setSecret(wxProperties.appSecret);
