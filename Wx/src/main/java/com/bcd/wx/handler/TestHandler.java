@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Map;
 
 @Component
@@ -36,8 +37,8 @@ public class TestHandler implements WxMpMessageHandler {
         logger.info("receive[{}]",wxMessage.toString());
         WxUserBean wxUserBean= wxUserService.findByOpenId(wxMessage.getFromUser());
         try (InputStream is = SpringUtil.getResource("image/test1.jpg").getInputStream()){
-            Path path=Files.createTempFile("test1","jpg");
-            Files.copy(is,path);
+            Path path=Files.createTempFile("test1",".jpg");
+            Files.copy(is,path, StandardCopyOption.REPLACE_EXISTING);
             WxMediaImgUploadResult wxMediaImgUploadResult= wxMpService.getMaterialService().mediaImgUpload(path.toFile());
             String imageUrl=wxMediaImgUploadResult.getUrl();
             return WxMpXmlOutMessage.IMAGE().fromUser(wxMessage.getToUser()).toUser(wxMessage.getFromUser())
