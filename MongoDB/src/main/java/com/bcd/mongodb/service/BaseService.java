@@ -1,5 +1,6 @@
 package com.bcd.mongodb.service;
 
+import com.bcd.base.cache.anno.MyCacheClass;
 import com.bcd.base.condition.Condition;
 import com.bcd.base.exception.BaseRuntimeException;
 import com.bcd.base.i18n.I18NData;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Administrator on 2017/8/25.
  */
+@MyCacheClass
 @SuppressWarnings("unchecked")
 public class BaseService<T,K extends Serializable>{
     @Autowired

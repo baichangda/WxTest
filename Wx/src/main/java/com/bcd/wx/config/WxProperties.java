@@ -1,4 +1,4 @@
-package com.bcd.config.wx;
+package com.bcd.wx.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

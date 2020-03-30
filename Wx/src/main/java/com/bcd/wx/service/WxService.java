@@ -60,7 +60,6 @@ public class WxService {
             // 明文传输的消息
             WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(request.getInputStream());
             WxMpXmlOutMessage outMessage = wxMpMessageRouter.route(inMessage);
-            logger.info("out message[{}]",outMessage==null?"null":outMessage.toString());
             if(outMessage == null) {
                 //为null，说明路由配置有问题，需要注意
                 response.getWriter().write("");
@@ -75,7 +74,6 @@ public class WxService {
             String msgSignature = request.getParameter("msg_signature");
             WxMpXmlMessage inMessage = WxMpXmlMessage.fromEncryptedXml(request.getInputStream(), wxMpConfigStorage, timestamp, nonce, msgSignature);
             WxMpXmlOutMessage outMessage = wxMpMessageRouter.route(inMessage);
-            logger.info("out message[{}]",outMessage==null?"null":outMessage.toString());
             if(outMessage == null) {
                 //为null，说明路由配置有问题，需要注意
                 response.getWriter().write("");

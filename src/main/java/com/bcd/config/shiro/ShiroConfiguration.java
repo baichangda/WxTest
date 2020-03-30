@@ -144,7 +144,7 @@ public class ShiroConfiguration{
         filterChainMap.put("/api/i18n/changeLocal", "anon");
 //        filterChainMap.put("/api/**/list", "user");
 //        filterChainMap.put("/api/**/page", "user");
-        filterChainMap.put("/api/**","authc");
+//        filterChainMap.put("/api/**","authc");
         factoryBean.setFilterChainDefinitionMap(filterChainMap);
     }
 
