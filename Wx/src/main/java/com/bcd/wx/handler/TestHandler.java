@@ -38,8 +38,8 @@ public class TestHandler implements WxMpMessageHandler {
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager) throws WxErrorException {
         logger.info("receive[{}]",wxMessage.toString());
         WxUserBean wxUserBean= wxUserService.findByOpenId(wxMessage.getFromUser());
-        try (InputStream is = SpringUtil.getResource("image/test1.jpg").getInputStream()){
-            Path path=Files.createTempFile("test1",".jpg");
+        try (InputStream is = SpringUtil.getResource("image/test1.png").getInputStream()){
+            Path path=Files.createTempFile("test1",".png");
             Files.copy(is,path, StandardCopyOption.REPLACE_EXISTING);
 
             WxMediaUploadResult wxMediaUploadResult= wxMpService.getMaterialService().mediaUpload(WxConsts.MediaFileType.IMAGE,path.toFile());
