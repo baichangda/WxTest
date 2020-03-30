@@ -41,6 +41,7 @@ public class TestHandler implements WxMpMessageHandler {
             Files.copy(is,path, StandardCopyOption.REPLACE_EXISTING);
             WxMediaImgUploadResult wxMediaImgUploadResult= wxMpService.getMaterialService().mediaImgUpload(path.toFile());
             String imageUrl=wxMediaImgUploadResult.getUrl();
+            logger.info("upload image succeed[{}]",imageUrl);
             return WxMpXmlOutMessage.IMAGE().fromUser(wxMessage.getToUser()).toUser(wxMessage.getFromUser())
                     .mediaId(imageUrl).build();
         } catch (IOException e) {
