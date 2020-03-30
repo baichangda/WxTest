@@ -7,11 +7,8 @@ import com.bcd.mongodb.code.Config;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
-@Document(collection = "account")
-public class AccountBean extends SuperBaseBean<String>{
+@Document(collection = "wxUser")
+public class WxUserBean extends SuperBaseBean<String>{
     //微信用户id
     @ApiModelProperty(value = "微信用户openId")
     private String openId;
@@ -38,7 +35,7 @@ public class AccountBean extends SuperBaseBean<String>{
 
     public static void main(String [] args){
         Config configProperties=new Config(
-                new CollectionConfig("Account","账号信息", AccountBean.class)
+                new CollectionConfig("WxUser","微信用户信息", WxUserBean.class)
         );
         CodeGenerator.generate(configProperties);
     }

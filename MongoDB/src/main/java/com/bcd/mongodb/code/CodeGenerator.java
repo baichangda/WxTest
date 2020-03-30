@@ -2,7 +2,10 @@ package com.bcd.mongodb.code;
 
 import com.bcd.base.define.CommonConst;
 import com.bcd.base.exception.BaseRuntimeException;
+import com.bcd.base.util.ClassUtil;
 import com.bcd.base.util.FileUtil;
+import com.bcd.mongodb.bean.BaseBean;
+import com.bcd.mongodb.bean.SuperBaseBean;
 import com.bcd.mongodb.test.bean.TestBean;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -13,11 +16,12 @@ import org.springframework.data.annotation.Transient;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -25,6 +29,10 @@ import java.util.stream.Collectors;
  */
 @SuppressWarnings("unchecked")
 public class CodeGenerator {
+
+    private final static String CLASS_OUT_DIR_PATH ="out/production/classes";
+    private final static String CLASS_BUILD_DIR_PATH ="build/classes/java/main";
+    private final static String SOURCE_DIR_PATH="src/main/java";
 
     private final static Logger logger= LoggerFactory.getLogger(CodeGenerator.class);
 
@@ -54,14 +62,19 @@ public class CodeGenerator {
             valueMap.put("paramValidateAnno","");
         }
         //缩进
-        final String blank = "            ";
+        final String blank = "        ";
         List<JavaColumn> javaColumnList = (List<JavaColumn>) collectionConfig.getDataMap().get("fieldList");
+        StringBuilder swaggerParamSb=new StringBuilder();
         StringBuilder paramsSb = new StringBuilder();
         StringBuilder conditionsSb = new StringBuilder();
         for (int i = 0; i <= javaColumnList.size() - 1; i++) {
             JavaColumn column = javaColumnList.get(i);
             if(CodeConst.IGNORE_PARAM_NAME.contains(column.getName())){
                 continue;
+            }
+            if(swaggerParamSb.length()>0){
+                swaggerParamSb.append(",");
+                swaggerParamSb.append("\n");
             }
             if (paramsSb.length()>0) {
                 paramsSb.append(",");
@@ -73,57 +86,51 @@ public class CodeGenerator {
             }
             //取到原始类型对应的包装类型
             String type = CodeConst.BASE_TYPE_TO_PACKAGE_TYPE.getOrDefault(column.getType(),column.getType());
-            String swaggerExample= CodeConst.PACKAGE_TYPE_TO_SWAGGER_EXAMPLE.get(type);
+            String swaggerType= CodeConst.JAVA_TYPE_TO_SWAGGER_FULL_JAVA_TYPE.get(type);
             String param = column.getName();
             String paramBegin = column.getName() + "Begin";
             String paramEnd = column.getName() + "End";
             //1、controllerListSwaggerParams和controllerListParams
+            swaggerParamSb.append(blank);
             paramsSb.append(blank);
             if (type.equals("Date")) {
-                paramsSb.append("@ApiParam(value = \""+column.getComment()+"开始\")");
-                paramsSb.append("\n");
-                paramsSb.append(blank);
-                paramsSb.append("@RequestParam(value = \"" + paramBegin + "\",required = false) " + type + " " + paramBegin);
+                swaggerParamSb.append("@ApiImplicitParam(name = \""+paramBegin+"\", value = \""+column.getComment()+"开始\", dataType = \""+swaggerType+"\")");
+                swaggerParamSb.append(",");
+                swaggerParamSb.append("\n");
+                swaggerParamSb.append(blank);
+                swaggerParamSb.append("@ApiImplicitParam(name = \""+paramEnd+"\", value = \""+column.getComment()+"结束\", dataType = \""+swaggerType+"\")");
+
+                paramsSb.append("@RequestParam(value = \"" + paramBegin + "\", required = false) " + type + " " + paramBegin);
                 paramsSb.append(",");
-                paramsSb.append("\n");
-                paramsSb.append(blank);
-                paramsSb.append("@ApiParam(value = \""+column.getComment()+"截止\")");
                 paramsSb.append("\n");
                 paramsSb.append(blank);
                 paramsSb.append("@RequestParam(value = \"" + paramEnd + "\",required = false) " + type + " " + paramEnd);
             } else {
-                if(swaggerExample==null){
-                    paramsSb.append("@ApiParam(value = \""+column.getComment()+"\")");
-                    paramsSb.append("\n");
-                    paramsSb.append(blank);
-                }else{
-                    paramsSb.append("@ApiParam(value = \""+column.getComment()+"\",example=\""+swaggerExample+"\")");
-                    paramsSb.append("\n");
-                    paramsSb.append(blank);
-                }
-                paramsSb.append("@RequestParam(value = \"" + param + "\",required = false) " + type + " " + param);
+                swaggerParamSb.append("@ApiImplicitParam(name = \""+column.getName()+"\", value = \""+column.getComment()+"\", dataType = \""+swaggerType+"\")");
+                paramsSb.append("@RequestParam(value = \"" + param + "\", required = false) " + type + " " + param);
             }
             //2、controllerListConditions
             String condition = CodeConst.TYPE_TO_CONDITION.get(column.getType());
             conditionsSb.append(blank);
             if (type.equals("Date")) {
-                conditionsSb.append("new " + condition + "(\"" + param + "\"," + paramBegin + ", " + condition + ".Handler.GE)");
+                conditionsSb.append("    new " + condition + "(\"" + param + "\"," + paramBegin + ", " + condition + ".Handler.GE)");
                 conditionsSb.append(",");
                 conditionsSb.append("\n");
                 conditionsSb.append(blank);
-                conditionsSb.append("new " + condition + "(\"" + param + "\"," + paramEnd + ", " + condition + ".Handler.LE)");
+                conditionsSb.append("    new " + condition + "(\"" + param + "\"," + paramEnd + ", " + condition + ".Handler.LE)");
             }else if(type.equals("Boolean")||type.equals("boolean")) {
-                conditionsSb.append("new " + condition + "(\"" + param + "\"," + param + ")");
+                conditionsSb.append("    new " + condition + "(\"" + param + "\"," + param + ")");
             }else if(type.equals("String")){
                 String handler="Handler.ALL_LIKE";
                 if(CodeConst.ID_FIELD_SET.contains(param)){
                     handler="Handler.EQUAL";
                 }
-                conditionsSb.append("new " + condition + "(\"" + param + "\"," + param + ", " + condition + "."+handler+")");
+                conditionsSb.append("    new " + condition + "(\"" + param + "\"," + param + ", " + condition + "."+handler+")");
             }else{
-                conditionsSb.append("new " + condition + "(\"" + param + "\"," + param + ", " + condition + ".Handler.EQUAL)");
+                conditionsSb.append("    new " + condition + "(\"" + param + "\"," + param + ", " + condition + ".Handler.EQUAL)");
             }
         }
+        collectionConfig.getValueMap().put("controllerListSwaggerParams", swaggerParamSb.toString());
         collectionConfig.getValueMap().put("controllerListParams", paramsSb.toString());
         collectionConfig.getValueMap().put("controllerListConditions", conditionsSb.toString());
     }
@@ -144,7 +151,17 @@ public class CodeGenerator {
         valueMap.put("upperModuleName",upperModuleName);
         valueMap.put("lowerModuleName",lowerModuleName);
         //2、解析出当前beanClass对应java类的文件夹路径
-        String beanPath=beanClass.getResource("").getFile().replace("out/production/classes","src/main/java");
+        String classFilePath= beanClass.getResource("").getFile();
+        String beanPath;
+        if(classFilePath.contains(CLASS_OUT_DIR_PATH)){
+            //替换out目录下
+            beanPath=beanClass.getResource("").getFile().replace(CLASS_OUT_DIR_PATH,SOURCE_DIR_PATH);
+        }else if(classFilePath.contains(CLASS_BUILD_DIR_PATH)){
+            //替换build目录下
+            beanPath=beanClass.getResource("").getFile().replace(CLASS_BUILD_DIR_PATH,SOURCE_DIR_PATH);
+        }else{
+            throw BaseRuntimeException.getException("initBean failed,class path["+classFilePath+"] not support");
+        }
         String dirPath=Paths.get(beanPath).getParent().toString();
         dataMap.put("dirPath",dirPath);
         //3、解析出所有的字段和实体类的注释
@@ -168,13 +185,18 @@ public class CodeGenerator {
         }
     }
 
+    private static Class getPKType(Class beanClass){
+        Type parentType= ClassUtil.getParentUntil(beanClass, SuperBaseBean.class, BaseBean.class);
+        return (Class) ((ParameterizedType) parentType).getActualTypeArguments()[0];
+    }
+
     /**
      * 初始化主键类型
      * @param config
      * @throws Exception
      */
     private static void initPkType(CollectionConfig config){
-        String pkType=((ParameterizedType) config.getClazz().getGenericSuperclass()).getActualTypeArguments()[0].getTypeName();
+        String pkType=getPKType(config.getClazz()).getTypeName();
         config.getValueMap().put("pkType",pkType.substring(pkType.lastIndexOf('.')+1));
     }
 
@@ -185,7 +207,7 @@ public class CodeGenerator {
      * @param collectionConfig
      * @param beanClass
      */
-    public static void parseBeanClass(CollectionConfig collectionConfig,Class beanClass){
+    public static void parseBeanClass(CollectionConfig collectionConfig, Class beanClass){
         collectionConfig.getValueMap().put("moduleNameCN",collectionConfig.getModuleNameCN());
         List<Field> fieldList=FieldUtils.getAllFieldsList(beanClass).stream().filter(e->{
             if(e.getAnnotation(Transient.class)!=null){
@@ -203,31 +225,26 @@ public class CodeGenerator {
         }).collect(Collectors.toList());
 
 
-        Map<String,JavaColumn> columnMap= fieldList.stream().map(f-> {
+        Map<String, JavaColumn> columnMap= fieldList.stream().map(f-> {
             String fieldName = f.getName();
             Class fieldType;
             if ("id".equals(fieldName)) {
-                fieldType = (Class) ((ParameterizedType) beanClass.getGenericSuperclass()).getActualTypeArguments()[0];
+                fieldType = getPKType(beanClass);
             } else {
                 fieldType = f.getType();
             }
 
             JavaColumn javaColumn= new JavaColumn(fieldName, fieldType.getSimpleName());
-
             ApiModelProperty apiModelProperty= f.getAnnotation(ApiModelProperty.class);
             if(apiModelProperty!=null){
-                String comment=apiModelProperty.value();
-                int index=comment.indexOf("(");
-                if(index>0){
-                    comment=comment.substring(0,index);
-                }
-                javaColumn.setComment(comment);
+                javaColumn.setComment(apiModelProperty.value());
             }
             return javaColumn;
         }).collect(Collectors.toMap(
                 e->e.getName(),
                 e->e,
-                (e1,e2)->e1
+                (e1,e2)->e1,
+                ()->new LinkedHashMap<>()
         ));
 
         collectionConfig.getDataMap().put("fieldList",columnMap.values().stream().collect(Collectors.toList()));
