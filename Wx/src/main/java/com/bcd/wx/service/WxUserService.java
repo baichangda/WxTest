@@ -6,6 +6,8 @@ import com.bcd.base.config.init.SpringInitializable;
 import com.bcd.mongodb.service.BaseService;
 import com.bcd.wx.config.WxProperties;
 import me.chanjar.weixin.mp.config.WxMpConfigStorage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -17,6 +19,8 @@ import com.bcd.wx.bean.WxUserBean;
  */
 @Service
 public class WxUserService extends BaseService<WxUserBean,String> implements SpringInitializable {
+
+    Logger logger= LoggerFactory.getLogger(WxUserService.class);
 
     @Autowired
     WxProperties wxProperties;
@@ -42,6 +46,7 @@ public class WxUserService extends BaseService<WxUserBean,String> implements Spr
 
     @Cacheable
     public WxUserBean findByOpenId(String openId){
+        logger.info("call findByOpenId[{}]",openId);
         Condition condition=new StringCondition("openId",openId, StringCondition.Handler.EQUAL);
         return findOne(condition);
     }
