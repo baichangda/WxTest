@@ -1,6 +1,5 @@
 package com.bcd.wx.service;
 
-import com.bcd.base.util.JsonUtil;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
@@ -61,11 +60,9 @@ public class WxService {
             WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(request.getInputStream());
             WxMpXmlOutMessage outMessage = wxMpMessageRouter.route(inMessage);
             if(outMessage == null) {
-                //为null，说明路由配置有问题，需要注意
-                response.getWriter().write("");
-            }else {
-                response.getWriter().write(outMessage.toXml());
+                outMessage=WxMpXmlOutMessage.TEXT().fromUser(inMessage.getToUser()).toUser(inMessage.getFromUser()).content("暂不支持").build();
             }
+            response.getWriter().write(outMessage.toXml());
             return;
         }
 
@@ -75,11 +72,9 @@ public class WxService {
             WxMpXmlMessage inMessage = WxMpXmlMessage.fromEncryptedXml(request.getInputStream(), wxMpConfigStorage, timestamp, nonce, msgSignature);
             WxMpXmlOutMessage outMessage = wxMpMessageRouter.route(inMessage);
             if(outMessage == null) {
-                //为null，说明路由配置有问题，需要注意
-                response.getWriter().write("");
-            }else {
-                response.getWriter().write(outMessage.toEncryptedXml(wxMpConfigStorage));
+                outMessage=WxMpXmlOutMessage.TEXT().fromUser(inMessage.getToUser()).toUser(inMessage.getFromUser()).content("暂不支持").build();
             }
+            response.getWriter().write(outMessage.toEncryptedXml(wxMpConfigStorage));
             return;
         }
 
