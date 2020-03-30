@@ -4,9 +4,11 @@ import com.bcd.base.cache.ExpireConcurrentMapCache;
 import com.bcd.base.cache.MySimpleKeyGenerator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.cache.Cache;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+@EnableCaching
 @Configuration
 public class CacheConfig {
     /**
@@ -17,7 +19,7 @@ public class CacheConfig {
     @ConditionalOnMissingClass("org.springframework.data.redis.connection.RedisConnectionFactory")
     @Bean("myCache")
     public Cache myCache(){
-        return new ExpireConcurrentMapCache("myCache_1",5*1000L);
+        return new ExpireConcurrentMapCache("myCache",5*1000L);
     }
 
     @Bean("mySimpleKeyGenerator")
