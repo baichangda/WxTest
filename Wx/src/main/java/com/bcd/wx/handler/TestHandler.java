@@ -5,11 +5,13 @@ import com.bcd.base.util.SpringUtil;
 import com.bcd.wx.bean.WxUserBean;
 import com.bcd.wx.service.WxUserService;
 import me.chanjar.weixin.common.api.WxConsts;
+import me.chanjar.weixin.common.bean.result.WxMediaUploadResult;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpMessageHandler;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.material.WxMediaImgUploadResult;
+import me.chanjar.weixin.mp.bean.material.WxMpMaterial;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import org.slf4j.Logger;
@@ -39,11 +41,12 @@ public class TestHandler implements WxMpMessageHandler {
         try (InputStream is = SpringUtil.getResource("image/test1.jpg").getInputStream()){
             Path path=Files.createTempFile("test1",".jpg");
             Files.copy(is,path, StandardCopyOption.REPLACE_EXISTING);
-            WxMediaImgUploadResult wxMediaImgUploadResult= wxMpService.getMaterialService().mediaImgUpload(path.toFile());
-            String imageUrl=wxMediaImgUploadResult.getUrl();
-            logger.info("upload image succeed[{}]",imageUrl);
+
+            WxMediaUploadResult wxMediaUploadResult= wxMpService.getMaterialService().mediaUpload(WxConsts.MediaFileType.IMAGE,path.toFile());
+            String mediaId=wxMediaUploadResult.getMediaId();
+            logger.info("upload image succeed[{}]",mediaId);
             return WxMpXmlOutMessage.IMAGE().fromUser(wxMessage.getToUser()).toUser(wxMessage.getFromUser())
-                    .mediaId(imageUrl).build();
+                    .mediaId(mediaId).build();
         } catch (IOException e) {
             throw BaseRuntimeException.getException(e);
         }
