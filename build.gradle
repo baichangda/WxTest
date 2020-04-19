@@ -83,7 +83,7 @@ bootRun {
 
 buildscript {
     ext {
-        springBootVersion = '2.2.5.RELEASE'
+        springBootVersion = '2.2.6.RELEASE'
         shiroVersion='1.5.1'
         mavenRepoUrl='https://maven.aliyun.com/repository/central'
     }

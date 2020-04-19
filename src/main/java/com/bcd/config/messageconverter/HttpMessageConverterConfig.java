@@ -37,9 +37,7 @@ public class HttpMessageConverterConfig implements ApplicationListener<ContextRe
         MappingJackson2HttpMessageConverter httpMessageConverter=new MappingJackson2HttpMessageConverter();
         List<MediaType> supportedMediaTypes = new ArrayList<>();
         supportedMediaTypes.add(MediaType.APPLICATION_JSON);
-        supportedMediaTypes.add(MediaType.APPLICATION_JSON_UTF8);
         supportedMediaTypes.add(MediaType.APPLICATION_PROBLEM_JSON);
-        supportedMediaTypes.add(MediaType.APPLICATION_PROBLEM_JSON_UTF8);
         supportedMediaTypes.add(MediaType.APPLICATION_STREAM_JSON);
         httpMessageConverter.setObjectMapper(JsonUtil.GLOBAL_OBJECT_MAPPER);
         httpMessageConverter.setSupportedMediaTypes(supportedMediaTypes);
