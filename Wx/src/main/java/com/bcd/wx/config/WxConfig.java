@@ -41,11 +41,9 @@ public class WxConfig {
     @Bean
     public WxMpMessageRouter wxMpMessageRouter(WxMpService wxMpService, AbstractWxMpMessageHandler[] handlers){
         WxMpMessageRouter wxMpMessageRouter=new WxMpMessageRouter(wxMpService);
-        WxMpMessageRouterRule routerRule= wxMpMessageRouter.rule().async(false);
         for (AbstractWxMpMessageHandler handler : handlers) {
-            routerRule.msgType(handler.getMsgType()).handler(handler);
+            wxMpMessageRouter.rule().async(false).msgType(handler.getMsgType()).handler(handler).end();
         }
-        routerRule.end();
         return wxMpMessageRouter;
     }
 
