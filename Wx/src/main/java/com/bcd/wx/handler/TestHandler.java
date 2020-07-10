@@ -33,7 +33,7 @@ public class TestHandler implements WxMpMessageHandler {
         logger.info("receive[{}]",wxMessage.toString());
         WxUserBean wxUserBean= wxUserService.findByOpenId(wxMessage.getFromUser());
         try (InputStream is = SpringUtil.getResource("image/test1.png").getInputStream()){
-            WxMediaUploadResult wxMediaUploadResult= wxMpService.getMaterialService().mediaUpload(WxConsts.MediaFileType.IMAGE,WxConsts.MediaFileType.IMAGE,is);
+            WxMediaUploadResult wxMediaUploadResult= wxMpService.getMaterialService().mediaUpload(WxConsts.MediaFileType.IMAGE,"png",is);
             String mediaId=wxMediaUploadResult.getMediaId();
             logger.info("upload image succeed[{}]",mediaId);
             return WxMpXmlOutMessage.IMAGE().fromUser(wxMessage.getToUser()).toUser(wxMessage.getFromUser())
