@@ -1,0 +1,10 @@
+spring:
+#  mongodb配置
+   data.mongodb.uri: mongodb://test:test@127.0.0.1:27017/wxtest
+wx:
+   token: wxToken
+   aesKey: 6LBxXIefdvgKCteVUu07xBvTWCs455N7jrR2KUboPR1
+   name: baichangda
+   appId: wxe3962f308f7be716
+   appSecret: 93d2f97e50ab0b2db551c373135d82b7
+   openId: ovRhL1SkGRHBoHiJ0weuslK9te7c
