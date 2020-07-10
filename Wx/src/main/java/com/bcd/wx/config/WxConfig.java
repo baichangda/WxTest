@@ -1,9 +1,10 @@
 package com.bcd.wx.config;
 
-import com.bcd.wx.config.WxProperties;
-import com.bcd.wx.handler.TestHandler;
+import com.bcd.wx.handler.AbstractWxMpMessageHandler;
+import com.bcd.wx.handler.ImageHandler;
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
+import me.chanjar.weixin.mp.api.WxMpMessageRouterRule;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.api.impl.WxMpServiceImpl;
 import me.chanjar.weixin.mp.config.WxMpConfigStorage;
@@ -38,11 +39,13 @@ public class WxConfig {
     }
 
     @Bean
-    public WxMpMessageRouter wxMpMessageRouter(WxMpService wxMpService, TestHandler testHandler){
+    public WxMpMessageRouter wxMpMessageRouter(WxMpService wxMpService, AbstractWxMpMessageHandler[] handlers){
         WxMpMessageRouter wxMpMessageRouter=new WxMpMessageRouter(wxMpService);
-        wxMpMessageRouter
-                .rule().async(false).msgType(WxConsts.XmlMsgType.TEXT).handler(testHandler)
-                .end();
+        WxMpMessageRouterRule routerRule= wxMpMessageRouter.rule().async(false);
+        for (AbstractWxMpMessageHandler handler : handlers) {
+            routerRule.msgType(handler.getMsgType()).handler(handler);
+        }
+        routerRule.end();
         return wxMpMessageRouter;
     }
 
