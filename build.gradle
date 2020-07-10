@@ -28,7 +28,7 @@ allprojects{
         compile("org.apache.shiro:shiro-ehcache:${shiroVersion}")
 
         // https://mvnrepository.com/artifact/com.github.binarywang/weixin-java-mp
-        compile group: 'com.github.binarywang', name: 'weixin-java-mp', version: '3.7.3.B'
+        compile group: 'com.github.binarywang', name: 'weixin-java-mp', version: '3.8.4.B'
     }
 
     compileJava{
@@ -83,7 +83,7 @@ bootRun {
 
 buildscript {
     ext {
-        springBootVersion = '2.2.6.RELEASE'
+        springBootVersion = '2.3.1.RELEASE'
         shiroVersion='1.5.1'
         mavenRepoUrl='https://maven.aliyun.com/repository/central'
     }
