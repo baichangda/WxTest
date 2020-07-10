@@ -1,9 +1,6 @@
 package com.bcd.sys.mongodb.bean;
 
 import com.bcd.mongodb.bean.BaseBean;
-import com.bcd.mongodb.code.CodeGenerator;
-import com.bcd.mongodb.code.CollectionConfig;
-import com.bcd.mongodb.code.Config;
 import com.bcd.sys.UserDataAccess;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
@@ -153,9 +150,5 @@ public class UserBean extends BaseBean<String> implements UserDataAccess<String>
     }
 
     public static void main(String [] args){
-        Config configProperties=new Config(
-                new CollectionConfig("User","用户", UserBean.class)
-        );
-        CodeGenerator.generate(configProperties);
     }
 }

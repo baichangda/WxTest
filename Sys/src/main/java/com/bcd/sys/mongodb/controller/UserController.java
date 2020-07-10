@@ -245,29 +245,4 @@ public class UserController extends BaseController {
         }
     }
 
-    /**
-     * 授予当前登录用户其他身份
-     * @param ids
-     * @return
-     */
-    @RequestMapping(value = "/runAs", method = RequestMethod.POST)
-    @ApiOperation(value="授予当前登录用户其他身份",notes = "授予当前登录用户其他身份")
-    @ApiResponse(code = 200,message = "授权结果")
-    public JsonMessage runAs(String ... ids){
-        userService.runAs(ids);
-        return MessageDefine.SUCCESS_AUTHORITY.toJsonMessage(true);
-    }
-
-    /**
-     * 解除当前登录用户的其他身份
-     * @return
-     */
-    @RequestMapping(value = "/releaseRunAs", method = RequestMethod.POST)
-    @ApiOperation(value="解除当前登录用户的其他身份",notes = "解除当前登录用户的其他身份")
-    @ApiResponse(code = 200,message = "解除授权结果")
-    public JsonMessage releaseRunAs(){
-        userService.releaseRunAs();
-        return MessageDefine.SUCCESS_RELEASE.toJsonMessage(true);
-    }
-
 }
