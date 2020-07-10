@@ -1,9 +1,8 @@
 package com.bcd.wx.bean;
 
 import com.bcd.mongodb.bean.SuperBaseBean;
-import com.bcd.mongodb.code.CodeGenerator;
-import com.bcd.mongodb.code.CollectionConfig;
-import com.bcd.mongodb.code.Config;
+import com.bcd.mongodb.code.freemarker.CodeGenerator;
+import com.bcd.mongodb.code.freemarker.CollectionConfig;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -34,9 +33,7 @@ public class WxUserBean extends SuperBaseBean<String>{
     }
 
     public static void main(String [] args){
-        Config configProperties=new Config(
-                new CollectionConfig("WxUser","微信用户信息", WxUserBean.class)
-        );
-        CodeGenerator.generate(configProperties);
+        CollectionConfig config=new CollectionConfig("WxUser","微信用户",WxUserBean.class);
+        CodeGenerator.generate(config);
     }
 }
