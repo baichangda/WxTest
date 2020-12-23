@@ -7,7 +7,6 @@ import com.bcd.base.util.FileUtil;
 import com.bcd.mongodb.bean.BaseBean;
 import com.bcd.mongodb.bean.SuperBaseBean;
 import com.bcd.mongodb.code.freemarker.data.*;
-import com.bcd.mongodb.test.bean.TestBean;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -268,15 +267,6 @@ public class CodeGenerator {
             ControllerData controllerData = initControllerData(config);
             generateController(controllerData,config.getTemplateDirPath(),config.getTargetDirPath());
         }
-    }
-
-    public static void main(String[] args) {
-        CollectionConfig config = new CollectionConfig("Test", "测试", TestBean.class)
-                                .setNeedCreateControllerFile(true)
-                                .setNeedCreateServiceFile(true)
-                                .setNeedCreateRepositoryFile(true)
-                                .setNeedValidateSaveParam(true);
-        CodeGenerator.generate(config);
     }
 
 }
