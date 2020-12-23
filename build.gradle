@@ -84,9 +84,8 @@ bootRun {
 
 buildscript {
     ext {
-        springBootVersion = '+'
-        shiroVersion='+'
-        lombokVersion='+'
+        springBootVersion = '2.4.1'
+        lombokVersion='1.18.16'
         mavenRepoUrl='https://maven.aliyun.com/repository/central'
     }
 
