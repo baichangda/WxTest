@@ -23,9 +23,10 @@ allprojects{
     }
 
     dependencies{
-        //shiro权限框架集成
-        compile("org.apache.shiro:shiro-spring:${shiroVersion}")
-        compile("org.apache.shiro:shiro-ehcache:${shiroVersion}")
+
+        // https://mvnrepository.com/artifact/org.projectlombok/lombok
+        compileOnly  group: 'org.projectlombok', name: 'lombok', version: "${lombokVersion}"
+        annotationProcessor group: 'org.projectlombok', name: 'lombok', version: "${lombokVersion}"
 
         // https://mvnrepository.com/artifact/com.github.binarywang/weixin-java-mp
         compile group: 'com.github.binarywang', name: 'weixin-java-mp', version: '3.8.4.B'
@@ -83,8 +84,9 @@ bootRun {
 
 buildscript {
     ext {
-        springBootVersion = '2.3.1.RELEASE'
-        shiroVersion='1.5.1'
+        springBootVersion = '+'
+        shiroVersion='+'
+        lombokVersion='+'
         mavenRepoUrl='https://maven.aliyun.com/repository/central'
     }
 
@@ -102,6 +104,5 @@ buildscript {
 }
 
 dependencies {
-    compile project(':Sys')
     compile project(':Wx')
 }

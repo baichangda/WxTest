@@ -13,9 +13,8 @@ dependencies {
     //springboot validation支持
     compile("org.springframework.boot:spring-boot-starter-validation:${springBootVersion}")
 
-    //poi 集成
-    compile("org.apache.poi:poi:${poiVersion}")
-    compile("org.apache.poi:poi-ooxml:${poiVersion}")
+    // https://mvnrepository.com/artifact/com.alibaba/easyexcel
+    compile group: 'com.alibaba', name: 'easyexcel', version: "${easyexcelVersion}"
 
     //json
     compile("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
@@ -54,7 +53,6 @@ dependencies {
 buildscript {
     ext {
         jacksonVersion = '2.10.3'
-        poiVersion = '4.1.2'
         commonsBeanutilsVersion ='1.9.4'
         commonsCodecVersion='1.14'
         commonsIoVersion='2.6'
@@ -64,5 +62,6 @@ buildscript {
 //        swaggerModelVersion='1.5.24'
         swaggerBootstrapUiVersion='+'
         commonsPool2='2.8.0'
+        easyexcelVersion='2.2.7'
     }
 }

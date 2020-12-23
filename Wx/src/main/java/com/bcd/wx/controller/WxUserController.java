@@ -35,16 +35,16 @@ public class WxUserController extends BaseController {
     @ApiOperation(value="查询微信用户列表",notes = "查询微信用户列表")
     @ApiResponse(code = 200,message = "微信用户列表")
     public JsonMessage<List<WxUserBean>> list(
-        @ApiParam(value = "微信用户openId") @RequestParam(required = false) Date openId,
-        @ApiParam(value = "微信用户名称") @RequestParam(required = false) Date name,
-        @ApiParam(value = "主键(唯一标识符,自动生成)(不需要赋值)") @RequestParam(required = false) Date id
+        @ApiParam(value = "微信用户openId") @RequestParam(required = false) String openId,
+        @ApiParam(value = "微信用户名称") @RequestParam(required = false) String name,
+        @ApiParam(value = "主键(唯一标识符,自动生成)(不需要赋值)") @RequestParam(required = false) String id
     ){
         Condition condition= Condition.and(
            new StringCondition("openId",openId),
            new StringCondition("name",name),
            new StringCondition("id",id)
         );
-        return JsonMessage.success(wxUserService.findAll(condition));
+        return JsonMessage.success().withData(wxUserService.findAll(condition));
     }
 
     /**
@@ -55,9 +55,9 @@ public class WxUserController extends BaseController {
     @ApiOperation(value="查询微信用户分页",notes = "查询微信用户分页")
     @ApiResponse(code = 200,message = "微信用户分页结果集")
     public JsonMessage<Page<WxUserBean>> page(
-        @ApiParam(value = "微信用户openId") @RequestParam(required = false) Date openId,
-        @ApiParam(value = "微信用户名称") @RequestParam(required = false) Date name,
-        @ApiParam(value = "主键(唯一标识符,自动生成)(不需要赋值)") @RequestParam(required = false) Date id,
+        @ApiParam(value = "微信用户openId") @RequestParam(required = false) String openId,
+        @ApiParam(value = "微信用户名称") @RequestParam(required = false) String name,
+        @ApiParam(value = "主键(唯一标识符,自动生成)(不需要赋值)") @RequestParam(required = false) String id,
         @ApiParam(value = "分页参数(页数)",defaultValue = "1")  @RequestParam(required = false,defaultValue = "1")Integer pageNum,
         @ApiParam(value = "分页参数(页大小)",defaultValue = "20") @RequestParam(required = false,defaultValue = "20") Integer pageSize
     ){
@@ -66,7 +66,7 @@ public class WxUserController extends BaseController {
            new StringCondition("name",name),
            new StringCondition("id",id)
         );
-        return JsonMessage.success(wxUserService.findAll(condition,PageRequest.of(pageNum-1,pageSize)));
+        return JsonMessage.success().withData(wxUserService.findAll(condition,PageRequest.of(pageNum-1,pageSize)));
     }
 
     /**

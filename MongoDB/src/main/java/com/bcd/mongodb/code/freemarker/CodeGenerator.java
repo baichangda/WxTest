@@ -164,7 +164,7 @@ public class CodeGenerator {
      * @param config
      */
     public static List<BeanField> initBeanField(CollectionConfig config){
-        List<Field> fieldList=FieldUtils.getAllFieldsList(config.getClazz()).stream().filter(e->{
+        List<Field> fieldList= FieldUtils.getAllFieldsList(config.getClazz()).stream().filter(e->{
             if(e.getAnnotation(Transient.class)!=null){
                 return false;
             }

@@ -3,7 +3,7 @@ package com.bcd.config.converter;
 import com.bcd.base.exception.BaseRuntimeException;
 import com.bcd.base.util.DateUtil;
 import com.bcd.define.MessageDefine;
-import com.bcd.sys.shiro.ShiroUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +17,7 @@ import java.util.Date;
 public class DateConverter implements Converter<String,Date> {
     @Override
     public Date convert(String source) {
-        if(source==null){
+        if(StringUtils.isEmpty(source)){
             return null;
         }
         try {
@@ -25,7 +25,7 @@ public class DateConverter implements Converter<String,Date> {
             return new Date(t);
         }catch (NumberFormatException e){
             try {
-                String timeZone= ShiroUtil.getCurrentUser().getTimeZone();
+                String timeZone="+8";
                 ZoneOffset zoneOffset= ZoneOffset.of(timeZone);
                 int sourceLen=source.length();
                 if(sourceLen==DateUtil.DATE_FORMAT_DAY.length()){

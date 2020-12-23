@@ -1,10 +1,12 @@
 package com.bcd.base.util;
 
+import com.bcd.base.define.CommonConst;
 import com.bcd.base.exception.BaseRuntimeException;
 import com.bcd.base.message.JsonMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import javax.validation.ConstraintViolation;
@@ -13,11 +15,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by Administrator on 2017/7/27.
  */
+@SuppressWarnings("unchecked")
 public class ExceptionUtil {
 
     private final static Logger logger = LoggerFactory.getLogger(ExceptionUtil.class);
@@ -59,21 +63,44 @@ public class ExceptionUtil {
      * @param throwable
      * @return
      */
-    public static JsonMessage<String> toJsonMessage(Throwable throwable) {
+    public static JsonMessage toJsonMessage(Throwable throwable) {
         Throwable realException = parseRealException(throwable);
         if (realException == null) {
             throw BaseRuntimeException.getException("ExceptionUtil.toJsonMessage Param[throwable] Can't Be Null");
         }
         if (realException instanceof BaseRuntimeException) {
-            return JsonMessage.fail(realException.getMessage(), ((BaseRuntimeException) realException).getCode(), getStackTraceMessage(realException));
+            return JsonMessage.fail()
+                    .withCode(((BaseRuntimeException) realException).getCode())
+                    .withMessage(realException.getMessage());
         } else if (realException instanceof ConstraintViolationException) {
+            //formdata方式请求、即application/x-www-form-urlencoded
             String message = ((ConstraintViolationException) realException).getConstraintViolations().stream().map(ConstraintViolation::getMessage).reduce((e1, e2) -> e1 + "," + e2).orElse("");
-            return JsonMessage.fail(message);
+            Set<ConstraintViolation<?>> constraintViolationSet= ((ConstraintViolationException) realException).getConstraintViolations();
+            List<Map<String,Object>> resList= constraintViolationSet.stream().map(constraintViolation->{
+                Map<String,Object> map=new LinkedHashMap<>();
+                map.put("invalidValue",constraintViolation.getInvalidValue()==null?"NULL":constraintViolation.getInvalidValue());
+                map.put("propertyPath",constraintViolation.getPropertyPath().toString());
+                map.put("message",constraintViolation.getMessage());
+                return map;
+            }).collect(Collectors.toList());
+            return JsonMessage.fail().withMessage(message).withCode(CommonConst.FORM_PARAM_VALIDATE_FAILED_CODE).withData(resList);
         } else if (realException instanceof MethodArgumentNotValidException) {
+            //payload方式请求、即content-type=application/json或multipart/form-data
             String message = ((MethodArgumentNotValidException) realException).getBindingResult().getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).filter(Objects::nonNull).reduce((e1, e2) -> e1 + "," + e2).orElse("");
-            return JsonMessage.fail(message);
+            List<ObjectError> errorList= ((MethodArgumentNotValidException) realException).getBindingResult().getAllErrors();
+            List<Map<String,Object>> resList=errorList.stream().map(e->{
+                Map<String,Object> map=new LinkedHashMap<>();
+                ConstraintViolation constraintViolation= e.unwrap(ConstraintViolation.class);
+                map.put("invalidValue",constraintViolation.getInvalidValue()==null?"NULL":constraintViolation.getInvalidValue());
+                map.put("propertyPath",constraintViolation.getPropertyPath().toString());
+                map.put("message",constraintViolation.getMessage());
+                map.put("objectName",e.getObjectName());
+                map.put("code",e.getCode());
+                return map;
+            }).collect(Collectors.toList());
+            return JsonMessage.fail().withMessage(message).withCode(CommonConst.PAYLOAD_PARAM_VALIDATE_FAILED_CODE).withData(resList);
         } else {
-            return JsonMessage.fail(realException.getMessage());
+            return JsonMessage.fail().withMessage(realException.getMessage());
         }
     }
 

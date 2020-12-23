@@ -2,6 +2,9 @@ package com.bcd.mongodb.bean;
 
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
@@ -10,7 +13,10 @@ import java.util.Date;
 /**
  * Created by Administrator on 2017/8/25.
  */
-public class BaseBean<K extends Serializable> extends SuperBaseBean<K>{
+@Accessors(chain = true)
+@Getter
+@Setter
+public class BaseBean<K extends Serializable> extends SuperBaseBean<K> {
     @ApiModelProperty(value = "创建时间(不需要赋值)")
     protected Date createTime;
 

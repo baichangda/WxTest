@@ -2,12 +2,10 @@ package com.bcd.base.condition.impl;
 
 import com.bcd.base.condition.Condition;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 /**
- * Created by Administrator on 2016/12/30.
+ * 日期类型条件
+ * 当val==null时候忽略此条件
+ *
  */
 @SuppressWarnings("unchecked")
 public class DateCondition extends Condition {
@@ -19,12 +17,11 @@ public class DateCondition extends Condition {
         this.handler=handler;
     }
 
-    public static Condition or(String fieldName,Handler handler,Object ... vals){
-        if(fieldName==null||vals==null||handler==null||vals.length==0){
-            return null;
-        }
-        List<Condition> conditionList= Arrays.stream(vals).map(val->new DateCondition(fieldName,val,handler)).collect(Collectors.toList());
-        return or(conditionList);
+    @Override
+    public String toAnalysis() {
+        return val==null?null:fieldName +
+                " " +
+                handler.toString();
     }
 
     public enum Handler{
