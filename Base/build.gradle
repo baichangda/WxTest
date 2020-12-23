@@ -60,7 +60,7 @@ buildscript {
         swaggerVersion='2.9.2'
         swaggerModelVersion='1.6.1'
 //        swaggerModelVersion='1.5.24'
-        swaggerBootstrapUiVersion='+'
+        swaggerBootstrapUiVersion='1.9.6'
         commonsPool2='2.8.0'
         easyexcelVersion='2.2.7'
     }
