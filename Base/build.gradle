@@ -16,20 +16,11 @@ dependencies {
     // https://mvnrepository.com/artifact/com.alibaba/easyexcel
     compile group: 'com.alibaba', name: 'easyexcel', version: "${easyexcelVersion}"
 
-    //json
-    compile("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
-    compile("com.fasterxml.jackson.core:jackson-core:${jacksonVersion}")
-    compile("com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}")
+    //xml
     compile("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:${jacksonVersion}")
-
-    //apache commons beanUtils
-    compile("commons-beanutils:commons-beanutils:${commonsBeanutilsVersion}")
 
     //apache commons codec
     compile("commons-codec:commons-codec:${commonsCodecVersion}")
-
-    //apache commons io
-    compile("commons-io:commons-io:${commonsIoVersion}")
 
     //apache commons lang3
     compile("org.apache.commons:commons-lang3:${commonsLangVersion}")
@@ -52,16 +43,13 @@ dependencies {
 }
 buildscript {
     ext {
-        jacksonVersion = '2.10.3'
-        commonsBeanutilsVersion ='1.9.4'
-        commonsCodecVersion='1.14'
-        commonsIoVersion='2.6'
-        commonsLangVersion='3.9'
+        jacksonVersion = '2.11.4'
+        commonsCodecVersion='1.15'
+        commonsLangVersion='3.11'
         swaggerVersion='2.9.2'
         swaggerModelVersion='1.6.1'
 //        swaggerModelVersion='1.5.24'
-        swaggerBootstrapUiVersion='1.9.6'
-        commonsPool2='2.8.0'
+        swaggerBootstrapUiVersion='2.0.8'
         easyexcelVersion='2.2.7'
     }
 }

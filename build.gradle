@@ -29,7 +29,7 @@ allprojects{
         annotationProcessor group: 'org.projectlombok', name: 'lombok', version: "${lombokVersion}"
 
         // https://mvnrepository.com/artifact/com.github.binarywang/weixin-java-mp
-        compile group: 'com.github.binarywang', name: 'weixin-java-mp', version: '3.8.4.B'
+        compile group: 'com.github.binarywang', name: 'weixin-java-mp', version: "${wxVersion}"
     }
 
     compileJava{
@@ -84,7 +84,8 @@ bootRun {
 
 buildscript {
     ext {
-        springBootVersion = '2.4.1'
+        wxVersion='4.0.3.B'
+        springBootVersion = '2.4.2'
         lombokVersion='1.18.16'
         mavenRepoUrl='https://maven.aliyun.com/repository/central'
     }
