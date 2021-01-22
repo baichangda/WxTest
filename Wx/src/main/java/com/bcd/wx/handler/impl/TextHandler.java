@@ -1,6 +1,7 @@
-package com.bcd.wx.handler;
+package com.bcd.wx.handler.impl;
 
 import com.bcd.wx.bean.WxUserBean;
+import com.bcd.wx.handler.AbstractWxMpMessageHandler;
 import com.bcd.wx.service.WxUserService;
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.error.WxErrorException;
@@ -31,6 +32,6 @@ public class TextHandler extends AbstractWxMpMessageHandler {
         logger.info("receive[{}]",wxMessage.toString());
         WxUserBean wxUserBean= wxUserService.findByOpenId(wxMessage.getFromUser());
         return WxMpXmlOutMessage.TEXT().fromUser(wxMessage.getToUser()).toUser(wxMessage.getFromUser())
-                    .content("你好").build();
+                    .content("你好:"+wxUserBean==null?"陌生人":wxUserBean.getName()).build();
     }
 }

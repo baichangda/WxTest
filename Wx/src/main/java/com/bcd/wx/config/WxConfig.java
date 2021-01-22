@@ -1,10 +1,7 @@
 package com.bcd.wx.config;
 
 import com.bcd.wx.handler.AbstractWxMpMessageHandler;
-import com.bcd.wx.handler.ImageHandler;
-import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
-import me.chanjar.weixin.mp.api.WxMpMessageRouterRule;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.api.impl.WxMpServiceImpl;
 import me.chanjar.weixin.mp.config.WxMpConfigStorage;

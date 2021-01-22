@@ -1,8 +1,9 @@
-package com.bcd.wx.handler;
+package com.bcd.wx.handler.impl;
 
 import com.bcd.base.exception.BaseRuntimeException;
 import com.bcd.base.util.SpringUtil;
 import com.bcd.wx.bean.WxUserBean;
+import com.bcd.wx.handler.AbstractWxMpMessageHandler;
 import com.bcd.wx.service.WxUserService;
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.bean.result.WxMediaUploadResult;
