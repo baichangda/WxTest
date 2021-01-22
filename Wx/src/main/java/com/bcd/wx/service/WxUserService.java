@@ -9,6 +9,6 @@ import com.bcd.wx.bean.WxUserBean;
 public class WxUserService extends BaseService<WxUserBean,String> {
 
     public WxUserBean findByOpenId(String fromUser) {
-        return findOne(new StringCondition("name",fromUser));
+        return findOne(new StringCondition("openId",fromUser));
     }
 }

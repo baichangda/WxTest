@@ -31,7 +31,8 @@ public class TextHandler extends AbstractWxMpMessageHandler {
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager) throws WxErrorException {
         logger.info("receive[{}]",wxMessage.toString());
         WxUserBean wxUserBean= wxUserService.findByOpenId(wxMessage.getFromUser());
+        String userName=wxUserBean==null?"陌生人":wxUserBean.getName();
         return WxMpXmlOutMessage.TEXT().fromUser(wxMessage.getToUser()).toUser(wxMessage.getFromUser())
-                    .content("你好:"+wxUserBean==null?"陌生人":wxUserBean.getName()).build();
+                    .content("你好:"+userName).build();
     }
 }
