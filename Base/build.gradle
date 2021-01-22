@@ -49,7 +49,7 @@ buildscript {
         swaggerVersion='2.9.2'
         swaggerModelVersion='1.6.1'
 //        swaggerModelVersion='1.5.24'
-        swaggerBootstrapUiVersion='2.0.8'
+        swaggerBootstrapUiVersion='1.9.6'
         easyexcelVersion='2.2.7'
     }
 }
